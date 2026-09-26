@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shroff Book — Wankaner Nagarpalika</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#081a33;
+    --navy-900:#0b2447;
+    --navy-800:#123a6b;
+    --navy-700:#1a4d8f;
+    --cyan-500:#16b8d6;
+    --cyan-300:#7fe0ef;
+    --cyan-100:#e3fbff;
+    --bg:#f2f7fa;
+    --surface:#ffffff;
+    --text:#0d1b2a;
+    --text-soft:#5b6b7c;
+    --line:#dfe9ee;
+    --good:#1e9e6b;
+    --radius:14px;
+    --font-head:'Poppins', 'Segoe UI', system-ui, sans-serif;
+    --font-body:'Inter', 'Segoe UI', system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#071527;
+      --surface:#0e2440;
+      --text:#eaf3f8;
+      --text-soft:#9fb3c4;
+      --line:#1c3c5c;
+      --cyan-100:#0e3a44;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#071527;
+    --surface:#0e2440;
+    --text:#eaf3f8;
+    --text-soft:#9fb3c4;
+    --line:#1c3c5c;
+    --cyan-100:#0e3a44;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    height:100%;
+    margin:0;
+    scroll-padding-top:env(safe-area-inset-top,0px);
+  }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    text-transform:uppercase;
+  }
+  h1,h2,h3,.brand{font-family:var(--font-head);}
+
+  /* ---------- APP SHELL ---------- */
+  .app{
+    display:flex;
+    min-height:100%;
+  }
+
+  /* Sidebar (desktop only) */
+  .sidebar{
+    display:none;
+    flex-direction:column;
+    width:250px;
+    background:linear-gradient(180deg,var(--navy-950),var(--navy-900));
+    color:#dce9f2;
+    padding:28px 20px;
+    gap:6px;
+    position:sticky;
+    top:0;
+    height:100vh;
+  }
+  .sidebar .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:16.5px;
+    line-height:1.35;
+    font-weight:600;
+    color:#fff;
+    margin-bottom:28px;
+  }
+  .sidebar .brand .mark{
+    width:52px;height:52px;border-radius:50%;
+    background:#fff;
+    object-fit:cover;
+    flex-shrink:0;
+    box-shadow:0 0 0 2px rgba(255,255,255,0.15);
+  }
+  .sidebar .tagline{
+    font-size:12.5px;
+    color:var(--cyan-300);
+    margin:0 0 26px 44px;
+  }
+  .brand-text{display:flex;flex-direction:column;min-width:0;}
+  .brand-en{display:block;}
+  .brand-gu{
+    display:block;
+    font-weight:400;
+    color:var(--cyan-300);
+    text-transform:none;
+  }
+  .sidebar .brand .brand-gu{font-size:12.5px;margin-top:2px;}
+  .topbar .brand .brand-gu{font-size:10.5px;margin-top:1px;color:var(--cyan-300);}
+  .nav-item{
+    display:flex;align-items:center;gap:12px;
+    padding:11px 12px;
+    border-radius:10px;
+    font-size:14.5px;
+    color:#c4d7e6;
+    cursor:pointer;
+    border-left:3px solid transparent;
+  }
+  .nav-item .ico{width:18px;text-align:center;opacity:.9;}
+  .nav-item.active{
+    background:rgba(22,184,214,0.14);
+    color:#fff;
+    border-left-color:var(--cyan-500);
+  }
+  .nav-item:not(.active):hover{background:rgba(255,255,255,0.05);}
+  .sidebar-foot{
+    margin-top:auto;
+    font-size:12px;
+    color:var(--text-soft);
+    color:#7d93a6;
+    border-top:1px solid rgba(255,255,255,0.08);
+    padding-top:16px;
+  }
+  .credit-line{
+    display:inline-block;
+    margin-top:8px;
+    font-size:10.5px;
+    color:#5f7488;
+  }
+  .app-footer-credit{
+    text-align:center;
+    font-size:11px;
+    color:var(--text-soft);
+    padding:18px 6px 6px;
+    text-transform:none;
+  }
+
+  /* Main column */
+  .main{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+  }
+
+  /* Mobile top bar */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 16px;
+    background:linear-gradient(135deg,var(--navy-900),var(--navy-800));
+    color:#fff;
+    flex-shrink:0;
+  }
+  .topbar .brand{
+    display:flex;align-items:center;gap:12px;font-size:14.5px;font-weight:600;line-height:1.3;
+  }
+  .topbar .brand .mark{
+    width:46px;height:46px;border-radius:50%;background:#fff;
+    object-fit:cover;
+    flex-shrink:0;
+    box-shadow:0 0 0 2px rgba(255,255,255,0.15);
+  }
+  .topbar .sub{font-size:11px;color:var(--cyan-300);font-weight:400;margin-top:1px;}
+  .topbar .date-pill{
+    font-size:11.5px;
+    background:rgba(255,255,255,0.1);
+    padding:6px 10px;
+    border-radius:20px;
+    color:#eaf6fa;
+    white-space:nowrap;
+  }
+
+  /* Desktop-only top strip inside main */
+  .desktop-topstrip{
+    display:none;
+    align-items:center;
+    justify-content:flex-end;
+    padding:18px 30px;
+    border-bottom:1px solid var(--line);
+    background:var(--surface);
+    flex-shrink:0;
+  }
+  .search-box{
+    display:flex;align-items:center;gap:8px;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:9px 14px;
+    width:320px;
+    color:var(--text-soft);
+    font-size:13.5px;
+  }
+  .avatar{
+    width:36px;height:36px;border-radius:50%;
+    background:var(--navy-800);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:600;font-family:var(--font-head);
+  }
+
+  /* Scroll area */
+  .content{
+    flex:1;
+    overflow-y:auto;
+    padding:18px 16px 90px;
+  }
+  @media (min-width:900px){
+    .content{padding:28px 30px 30px;}
+  }
+
+  .section-label{
+    font-size:13px;
+    color:var(--text-soft);
+    font-weight:500;
+    margin:22px 2px 10px;
+  }
+  .content > .section-label:first-child{margin-top:2px;}
+
+  /* Stat cards */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+  }
+  @media (min-width:900px){
+    .stats{grid-template-columns:repeat(4,1fr);gap:16px;}
+  }
+  @media (max-width:520px){
+    .stats{grid-template-columns:1fr;}
+  }
+  .stat-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .stat-card::before{
+    content:"";
+    position:absolute;left:0;top:0;bottom:0;width:4px;
+    background:var(--cyan-500);
+  }
+  .stat-card.credit::before{background:var(--good);}
+  .stat-card.debit::before{background:#d9534f;}
+  .stat-card.balance::before{background:var(--navy-700);}
+  .stat-card.credit .delta{color:var(--good);}
+  .stat-card.debit .delta{color:#d9534f;}
+  .stat-card .label{font-size:12px;color:var(--text-soft);margin-bottom:8px;}
+  .stat-card .value{font-family:var(--font-head);font-size:21px;font-weight:600;color:var(--navy-900)}
+  :root[data-theme="dark"] .stat-card .value{color:#fff;}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stat-card .value{color:#fff;}}
+  .stat-card .delta{font-size:11.5px;color:var(--good);margin-top:6px;}
+
+  /* Quick actions */
+  .actions{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+  }
+  @media (min-width:900px){
+    .actions{grid-template-columns:repeat(4,1fr);gap:16px;}
+  }
+  .action-btn{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 14px;
+    display:flex;flex-direction:column;gap:10px;
+    cursor:pointer;
+    transition:border-color .15s ease;
+  }
+  .action-btn:hover{border-color:var(--cyan-500);}
+  .action-btn .ico{
+    width:34px;height:34px;border-radius:9px;
+    background:var(--cyan-100);
+    color:var(--navy-800);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;
+  }
+  .action-btn .t{font-size:13.5px;font-weight:600;}
+  .action-btn.primary{
+    background:linear-gradient(135deg,var(--navy-900),var(--navy-700));
+    border-color:transparent;
+  }
+  .action-btn.primary .t{color:#fff;}
+  .action-btn.primary .ico{background:var(--cyan-500);color:var(--navy-950);}
+
+  /* Last Entry card */
+  .last-entry-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .le-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+  }
+  .le-field{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    min-width:100px;
+  }
+  .le-field.wide{flex:1;min-width:160px;}
+  .le-field.amt-field{min-width:120px;}
+  .le-field span{font-size:11.5px;color:var(--text-soft);}
+  .le-field b{
+    font-family:var(--font-head);
+    font-weight:600;
+    font-size:14.5px;
+    color:var(--navy-900);
+  }
+  :root[data-theme="dark"] .le-field b{color:#fff;}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .le-field b{color:#fff;}}
+  .le-field.amt-field b{color:var(--good);}
+
+  .date-input-wrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+  .date-input-wrap .form-input{
+    flex:1;
+    padding-right:44px;
+    cursor:pointer;
+  }
+  .date-picker-btn{
+    position:absolute;
+    right:6px;
+    top:50%;
+    transform:translateY(-50%);
+    background:none;
+    border:none;
+    font-size:16px;
+    cursor:pointer;
+    padding:6px;
+    line-height:1;
+  }
+  .hidden-date-input{
+    position:absolute;
+    opacity:0;
+    width:1px;height:1px;
+    left:0;top:0;
+    pointer-events:none;
+  }
+
+  /* Data Entry form */
+  .entry-form{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    max-width:480px;
+  }
+  .form-group{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .form-group label{
+    font-size:12px;
+    color:var(--text-soft);
+    font-weight:500;
+  }
+  .form-input{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:10px 12px;
+    font-size:13.5px;
+    color:var(--text);
+    font-family:var(--font-body);
+    text-transform:uppercase;
+  }
+  .form-input:focus{outline:2px solid var(--cyan-500);outline-offset:1px;}
+  textarea.form-input{resize:vertical;min-height:60px;}
+  .radio-group{display:flex;gap:18px;}
+  .radio-option{
+    display:flex;align-items:center;gap:7px;
+    font-size:13.5px;
+    cursor:pointer;
+  }
+  .radio-option input{accent-color:var(--cyan-500);width:16px;height:16px;}
+  .save-btn{
+    background:linear-gradient(135deg,var(--navy-900),var(--navy-700));
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:12px;
+    font-size:14px;
+    font-weight:600;
+    font-family:var(--font-head);
+    cursor:pointer;
+    text-transform:uppercase;
+  }
+  .save-btn:hover{filter:brightness(1.08);}
+
+  /* Confirm modal */
+  .modal-overlay{
+    display:none;
+    position:fixed;inset:0;
+    background:rgba(4,14,28,0.55);
+    align-items:center;justify-content:center;
+    z-index:50;
+    padding:16px;
+  }
+  .modal-overlay.active{display:flex;}
+  .modal-card{
+    background:var(--surface);
+    border-radius:16px;
+    width:100%;
+    max-width:420px;
+    padding:20px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.3);
+  }
+  .modal-title{
+    font-family:var(--font-head);
+    font-weight:600;
+    font-size:16px;
+    margin-bottom:14px;
+    color:var(--navy-900);
+  }
+  :root[data-theme="dark"] .modal-title{color:#fff;}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .modal-title{color:#fff;}}
+  .modal-body{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+  .modal-row{
+    display:flex;justify-content:space-between;gap:12px;
+    font-size:13px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:8px;
+  }
+  .modal-row span{color:var(--text-soft);flex-shrink:0;}
+  .modal-row b{text-align:right;}
+  .modal-row.wide{flex-direction:column;gap:4px;}
+  .modal-row.wide b{text-align:left;}
+  .modal-actions{display:flex;gap:10px;}
+  .btn-edit,.btn-confirm{
+    flex:1;
+    padding:11px;
+    border-radius:9px;
+    border:none;
+    font-size:13.5px;
+    font-weight:600;
+    font-family:var(--font-head);
+    cursor:pointer;
+    text-transform:uppercase;
+  }
+  .btn-edit{background:var(--bg);border:1px solid var(--line);color:var(--text);}
+  .btn-confirm{background:var(--cyan-500);color:var(--navy-950);}
+
+  .toast{
+    position:fixed;
+    bottom:90px;left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--navy-900);
+    color:#fff;
+    padding:12px 20px;
+    border-radius:10px;
+    font-size:13px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    z-index:60;
+    text-transform:uppercase;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  @media (min-width:900px){.toast{bottom:30px;}}
+
+  /* Tab views */
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .placeholder-card{
+    background:var(--surface);
+    border:1px dashed var(--line);
+    border-radius:var(--radius);
+    padding:30px 16px;
+    text-align:center;
+    color:var(--text-soft);
+    font-size:13px;
+  }
+
+  /* Account summary list */
+  .acct-list{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .acct-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  .acct-row:last-child{border-bottom:none;}
+  .acct-info{min-width:0;}
+  .acct-name{
+    font-size:13px;
+    font-weight:600;
+    color:var(--text);
+  }
+  .acct-no{
+    font-size:11px;
+    color:var(--text-soft);
+    margin-top:2px;
+  }
+  .acct-balance{
+    font-family:var(--font-head);
+    font-weight:600;
+    font-size:14px;
+    color:var(--navy-900);
+    flex-shrink:0;
+    white-space:nowrap;
+  }
+  :root[data-theme="dark"] .acct-balance{color:var(--cyan-300);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .acct-balance{color:var(--cyan-300);}}
+
+  /* Register table / list */
+  .register{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .register-row{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 14px;
+    border-bottom:1px solid var(--line);
+    font-size:13.5px;
+  }
+  .register-row:last-child{border-bottom:none;}
+  .register-row .rno{
+    font-family:var(--font-head);font-weight:600;font-size:12.5px;
+    color:var(--navy-800);
+    background:var(--cyan-100);
+    padding:3px 8px;border-radius:6px;flex-shrink:0;
+  }
+  :root[data-theme="dark"] .register-row .rno{color:var(--cyan-300);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .register-row .rno{color:var(--cyan-300);}}
+  .register-row .who{flex:1;min-width:0;}
+  .register-row .who .name{font-weight:500;}
+  .register-row .who .head{font-size:11.5px;color:var(--text-soft);}
+  .register-row .amt{font-family:var(--font-head);font-weight:600;flex-shrink:0;}
+
+  .table-head{
+    display:none;
+    padding:11px 14px;
+    font-size:11.5px;
+    color:var(--text-soft);
+    border-bottom:1px solid var(--line);
+    background:var(--bg);
+  }
+  @media (min-width:900px){
+    .table-head{display:flex;gap:12px;}
+    .table-head span:nth-child(1){width:70px;}
+    .table-head span:nth-child(2){flex:1;}
+    .table-head span:nth-child(3){width:110px;text-align:right;}
+  }
+
+  /* Bottom nav (mobile only) */
+  .bottomnav{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    display:flex;
+    background:var(--surface);
+    border-top:1px solid var(--line);
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px));
+    z-index:20;
+  }
+  .bn-item{
+    flex:1;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    font-size:10.5px;
+    color:var(--text-soft);
+    padding:4px 0;
+  }
+  .bn-item .ico{font-size:17px;}
+  .bn-item.active{color:var(--navy-800);}
+  :root[data-theme="dark"] .bn-item.active{color:var(--cyan-300);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bn-item.active{color:var(--cyan-300);}}
+  .bn-item.center .ico{
+    width:38px;height:38px;border-radius:50%;
+    background:var(--cyan-500);color:var(--navy-950);
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;margin-top:-20px;
+    box-shadow:0 4px 10px rgba(22,184,214,0.4);
+  }
+
+  /* Desktop / mobile visibility */
+  @media (min-width:900px){
+    .sidebar{display:flex;}
+    .topbar{display:none;}
+    .desktop-topstrip{display:flex;}
+    .bottomnav{display:none;}
+    .content{padding-bottom:30px;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Desktop sidebar -->
+  <aside class="sidebar">
+    <div class="brand"><img class="mark" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/7QCEUGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAGgcAigAYkZCTUQwYTAwMGFkNTAxMDAwMGJmMDMwMDAwNzcwNjAwMDA4NzA3MDAwMDUxMDkwMDAwOTQwZTAwMDA4MzE1MDAwMGRjMTUwMDAwNjAxNzAwMDBjZDE4MDAwMDRmMjAwMDAwAP/bAIQABQYGCwgLCwsLCw0LCwsNDg4NDQ4ODw0ODg4NDxAQEBEREBAQEA8TEhMPEBETFBQTERMWFhYTFhUVFhkWGRYWEgEFBQUKBwoICQkICwgKCAsKCgkJCgoMCQoJCgkMDQsKCwsKCw0MCwsICwsMDAwNDQwMDQoLCg0MDQ0MExQTExOc/8IAEQgAlgCWAwEiAAIRAQMRAf/EAKAAAAAHAQAAAAAAAAAAAAAAAAABAgMEBQcGEAACAgICAgEDBQAAAAAAAAABAgADBBESExAhIgUUICMwMTIzEQABAwEFBAcGBAQHAAAAAAABAAIRIQMSMUFREGFxgSIykaGx0fATIEJSweEzYnLxIzCCkgQUU6KywuISAQABAwMDBAMBAQEAAAAAAAERACExQVFhcYHwEJGhsSDB0eHxMP/aAAwDAQACAQMBAAAB2UAAAAABrn47K5Yt5YFAqLKMKU06QdsmYZHaCBPcQAAshjWy40BsoAARyUe3Ycs+KV1clrkeyjobUk3VEcODeLA4HsrDm3U9OzxFq0fZinuABjWy40stl5vouXZW/VI6aQhlk7llUWTVU6j7WAVgSW3IclRMJmNoVScv39S6l2x5foWVT8a2XGnU6JYVVsytD02gWUu0AUTcd+kMnrJqsA5a85GeR9jd8jbGU95UFtTT0htxKMn0/MGlaF0fMrSvo6NDplbx4HAyY/SW3OTyXZc7KgmdbYSbRBnKsEAgb0VtVsKSsJVlm3Z8YwrRINhbBVFN5/oFCti9lwM2L0vIHFQt1cEli2nwbxJXtJKpzS5cBttaKhrsI8ipzvQ88Wzqca7o0q4TQ0cG2/3rc5UiNycPtTeRxlJ3ufuI6d85zTjFnZViRAkP5vGkSuzn1BC5ynZcalxtlgzgR1kCeqO7PYJUlmPJTHQqbSWbZiskwrMhCsZwAVBkRDEaTA6BBjGtlxp5GygAAV9gEHXR7NhCqE+jedRnfSWL6y5mR07RDkuliw2lm5YTkmAA8gY1suNAbKMaAGyjGgBsoxoAbFHyUNnqzeWgj05GaAj12RjQdRsoxoGNlGNADZcaAA//2gAIAQEAAQUC/FmCw5wM3kNOi0z7Zp02CbtWDIEB3+0+WWNeOrsWSvxl/Ua6RlZDVjGzO405a2kFbAadRbfzJ1NtllAlUzrERsxPuq8ZuSW4Fbg4SWKuJp8LFap8dbEenJ7H2toBKfldaL2zLvt6+0Zy0KWharGnO550OZ9vOpxObrBwc24BGPhhza+ZZYaLQy+cywmGyrGnGyuY+L1FrmtNWOtc7B4tUmL4asGK8ysXml+Z0rjLupD4J1MMczfhPc+PjLQL3NjIgQZ1vCvEodVpbfg2gQMD4ZdxTLsSrljmyyWfEzPfSceAq4tL7epMarrWFQZadStZy2L7eLLbK8jw4gO4wUN7daG2t3zvZXHi752+GYLOXKD4i2zhNcjj2euexVZ4q9R96CHdPpk95Hiv3cTqC0GGzsbR29mpY+4/8Y66nGcZWff8W+CeNy77eT1yrL5Sj/TK2VwrHey0dbrfLCLIHiCKBv4tOOokb/W64qare+aYOPWRmnRxOKKvq7PNgXCY7tQWBl0dzc48pXQSQszuXH6aWdB7uyLl1iA8h8r7/jY6q0rGrbvUMWzrLWMZysm2MEQRbVSC+ZNbvMX41439b/m6OrTD+RyU5oQt9bsyMXXdRIjq5j0GCqyGtpz+XCKGWaYxUOrBuHI4Gmp7ZaRTVj19aSv9N8teaUO6NYnKJZyhmpeDpArW8pX78XXcYiCleHYcf+p/Xu8XV8wurlOCpYDUZNzZEHualmPt+qAcJ2tZKaRX4FChsq/gMenqXzYhBNw4s/BbLFrCWq8GmPFpqyX2GqLjJ43EbkL7xUMag7/F6pvnMrG7h9OqZJ9Oba4mRYb2sP3ObZdF/XxvpgKSpeMfI65Tje/zZA0+SwOD4rxq6y1SsYAFD5aLNW3Sqhav2yNzrnB5xsnVYZ9oDErVPz//2gAIAQMBAT8B2XI61N2avAYN7a/Ze1O7sC9pqAeUeELon8veERHudT9X/H7+CxQbyV0a9yu6EeHiohB2Rw9YIiNjMzp45LFYcUWmL2pj1uQMHZOv7IhNrTs9b9jqBo5poRM7Y2ZcNj8fWac2Y4DwV0tvTp9QnOjZKnY36FeyMTki3DgmvDSxxwjLdROqcesPuPoorOyNjsEwQD2dqvXGkRM56eqp+MaAJpp+mo+qgWlaMxz9FGte31psccNgEqzYHA7t2Op3Jz71IEMrTPTyRMoGKq8WyW4Gh3SpVDuUbwqa9iLtKJpOAzpxTjFBzOp8toMKAcKbvuojaGa04q9FB25n7e8HFX+HYFfPDhT3f//aAAgBAgEBPwHZ7SeoL2/4Rzz5L2bj1nng3ojz71/lhv5ud5r/AC8YOc3+qe4yum3847HeR7kx4dh+3H3Pxf0/8v8Az4oC7yy9ZJ1qMMeHqF7R3y94+69sc2kb8fCqvBytLGstMO1+h3Jjp3EUI0Oy1Mw0fFjuAx8kAGgR2Im/wGJ13BNgUwT23xBz5bCzNtD3Hj54pj58t6teib/J3D7eE7GVc86Q0eJ8e5WhpTE0HNART3cHfq8R9kRIhWR6I3UPKisjAP6neKLw4tj5v+pQZIJ02Qo2WmXEeK9qJjlomvi9+oosvC0bMEOn+6vmsBh1DP0ce8q9TZeRTMVamXAbyeQ+8ItvEEmIOGZ7FYiRPzEnvp3K0EOBOD+iePw+XYup0ethNMs9yYbvRP8ASdR5j77GiZ2OdFU9xbDjSca5ZDf5q7Akda0oJy38M0BAA0TmhwIOaaJIa8dJuB+YDPzGqLZoocPzcaH79yv/AJT3eak5Njj9pQZmanuHAeinwKuyrwTBJvmnyjQeZ2vYHY8jmOCD3M61R8w+o8kLQOwM8FKlOtxl0joPPAc0GE1fybkPM+86zacRzz7V7Iau/uK9i3OvEk+KAj3P/9oACAEBAQY/AvdkmFFm11pwwXws71W2PIL8Vypa9oWAd3LpAt4/y7liL51+EL+JaC1eMWzhyQEtboKDY7pNc8fBeripYGugFzgXXTdGicA2jWsP94lFsOY4CbrhBjVSIcDzClhjdkodQ+/JwUDo2OubkGCGzgMyv4LZ/wAQw3ui3L4rx3hX7GzZaX21ces3hvQlrmxSHY0VrS6bUdJyaLUC0c0YxCtje6FqBQUc2BFDwVpflxwbaF0y3IRlvVj/AIci7dLrVxDuvUxynJWuHs7Ol7V3xcgqEOG4yoOGvvQXXbFpAJ+Z2i6IzDZgwwamKwEbvQtrM3rPHDI8HK++zay0wOB71AAbNbrRUngFRoYPzY9gVbV3KAvxH/3KloedV0mzvb5K9QuGeYXsmG90r1aXhem6T9UWthlmw3ngNDTeI/DMUMap3sbMPs2dYkxeOYYmkdVwke4LJnWf3NTLJ1AcDlO86r2L2ut7F+DsxOT929FxcXvNJNIAyAFAFcssus/IcNStTm44nbTbOB1UOx8U8WcMdaReOo/ZBliAyza64XxN0jK5jzTKNbT4eryW8bJT7d3xYbmhPgsNlbBkn4g1uTcqohpcf1GV7JlPndoNOJQaBACMGHGjc6qbSbzicTXd3bc+QVNsHFe2LJc2tM4wpgTohb2r/Zs+CzwHSwvHMoO7dl0YvN1MYG3m4HcIV5jugBduijaH0EXaeKr1nVcd52AxUYbN4VM0WqtcK51qu7f+2/ZOY2dIz7Qi601EgZU5o3m3TWkzwQ7FZD5QXJ5aZJi6HdUdldlmzIdM8sO/bVScFVTmckScTK3j0Fvy8lXY5uh7ijdi9lOEq8XZRd+GddVaN59qfuaBttToGj67PWWwQKDxXSMnQYKUCFOq9ev33L16kd69epXFvgdp3s+qtoxuiOxAl14x0mG7PKEMelUcDhvwVtxb4I0O4jJEdu70VHMbNDqodTeop9ihx++z16lb0z9LvorsQHfEhefdnBrTBO8lAOMm6ey9RH8zPBVI3dGo5pvzHodhTvzNB7KI3ZwTzdNQw9xVRG/RRt36iiE18lhC6IV53LenflaB21Vo09Zokc6eKu9Jt3hFE7cwKzd/T2oXlaCksJcL2Aa/FMtPlx4HYQ5rjRrRH5ZXRso4/dVE9gjsXV71U9/2XxLByo080HAxDhI5oTlPcSjaH4ze5Zdys2STeN4zSGty7QjdIOsK0f8AM6nAI6io5IEjLvTbQzd6hJ+U1Qs8b3grhxbhvC+y37w0rJZK6SeVF+6oq/8AVQcELBuGL/0/dOvdQCQeGSNrEh2X5QjAgnxKa3QbCzJ1WotLZB4CN6FmXAYQ75hpKkdYYLQjEbaYIdGIJpy9y62rzgPqdyJJri52pR6zbPPV3EZLKMoUfBZY/q27xgocMMRvVer8sUULQ6rpdu28MPrBGyTRfwxT5zhyGa1JxccTsvRVXW9d1Gj6qM8zqfcvtxzGqmQDgJ+Y4d6l1dbonuUucGjU0XRcHcDOKdQtunGInhqqO7QsW9hQL3kA4lrKDiclJ6R1dXaDrrRScchqvaWnXd/tGnvS3HxQqWkHDX7JtbpY68DE14K1vjpG0NYiQIAjdCtTmbW0ndXyUOmLS+Wy8RdGjWzXmmsnomycY33gnsZZ9H2ZN8u3cMU2gtJY2hNCRqeKexzCw3i67HQAOTTmiLoaJMR2+Kutm0eSaafYK/aG8/ubw/k67ZaxrScwAEHEC83A5idlIA7F8x0FV/pN/wBy6I55/wAyhIXW7l1h2L8TsC6Rc7iVQAe//9oACAEBAgE/IfxEhDdYpKQcI93+VsT5v/ZR9SB6PrB6DWqHxdU6EeFveguGT/ydbl/d18zTTIYGO3f66VKkmyMvQt6QspCwSgJabheu5jqICGfgoHgBs3ceNE61GfZ3dYhdEnmjKYJIStWPuVdh+p/MypAuroUvKkw4cJx47GpQXsF3ltmo4EpgUscD5XFRiaNhFZCdoS6l6XgOO1LCl6JgwwF50YxnpOtRGpa32cO0xT2gPdZjlg0WtTZYzJryke6rZL3QMAIRK62pyAEL2C/DAdaOqAC7qUjk07Ov5QoS5xMwB2n+7U5pmQRmSwG1RTM9AwYuhsILAk0QPJYVjpMO1DSJuQGtB3unP6Xdo+ho/tqzxfVajdJ/DWgD4XXoiIChC05NylVosbwg3x8qgrRjcSShRI23q6potC0VlN2006UmVyTo/h17b7j5zRWkqGLsCblTVewVzV2kkZJYtQixiIGF24U5sFi34P8AgKm0u7jrNcvwx6Q8ojzS+b0EL+jsOiz33pBxaHSiJUtKhAyl5vJqIgbsslWObJdMrRCvJg5uvMrw57xUsj6BBVgJehWIE0n4sfFMQgLLdNwZTNpmjSCzdjaAJwBUmsJLX0eAVp8gU2P6xJTgN4oJNQWbqXtwKhJ3PRTUboh7VmQ+gGH/AJT8D5N6uIHmbjuQN1MEIWWxZKiSbGjS2DHobRMO+fj7o3AnIEi6OZbQb1MLgEgGJYgZI4RQJXhY3Vg7tPqW538sHoogZJJcnMbVCPf2/wBitQwEdVmOjTBeDpv7Xp85fdxsRarVggUGFCCP1ehYEWW7RssW8I9GiG51NSiAmGos9qMErgxlrRHSELFg3SWvZ4rlhd2rgrPXB9VGOLBKZwy1zRXXT8f5vUyV/tK0lIo2avnShDKMC0nPRW/FJDXIdqw4bHRD/SbWOajYw6O79SJo3mmAlPGocbm5k6UIklyrnJHuFccHPwTF46VeRcoYBlFrtM4ruQFL3/vQ+p4T/ZVGZaioczHcH21MriYDYHxpS4lJcDq1gzhv0oMXIWhzu/XFTXdrz1qbgH4dH9VbQiCI2vk923egTNofaf4yT3U4TOdljMba2lHs3vJYeY03FT4d/wDT16IPiml9bxOE8TULKyEhquOMwyO9BCi0gMJkHArGvoKShnkq0Y4aiWuyLTZc4mWdIN6mtD3B/mPTvTZwPp3KMb0cG5H862oyb0YjDcP2UAeFul3wVGO3TH81TvTrom+G2HoxOutEu2lm0eaV5rehXQRJmU0jEc010iJzgK93ARa96I4O9M7BYJQ1i9dtH3f5UNI1F/uf32oONkRuzAR0zVk/uOX3SmUSm2kceb8SIrzTYHeGLFRpEYTlStIkzF+5x6LovCYTI0GN7SCAf37qWMjtdm066TRgBEVrxTZyNkizfSJvFFJ7zJ5XYq+f3H+gVECLk1xJ3RUgEFDAlyYnTWaPBJ7s1xuVfSowBvYd6bX9ZgRRGzvvTsIZXGMb/ahG571okmG5HOjcSpOw4X/SojL0uXsfunVDnD6qf6ST8UIf5f5W4Ky2bvMn7pX6xqKgJRYwOcUrpa+8A/VKLatyFY/D3oGnUQnzJAzrbUlIDY+Wuy2jGD9hSclEswgzfSjw6gthOJgGGo4LKsYFLPepjmD2XthrEfH9NbHy2zWuI+bNeM0xvub2YZxmSI61ogD5fVJxBHhftrTWOn0aUiJkNgz0aN80TMSmJ3fxNAaBBeIN+ragpiULskxoxNoMxUbQAA1t63963UudW78+l9fuNSh1A7Nji7ml+1lqCxluGkm2YmySLq/Tw1iJ4jtRlagZrCOXNOioS50mT3miFJZU1Zh7d+gfNTmlyuxfgCrGx2xGbNjDzOFJu8Y0ANIacAvd2Ok7euEteXNOIFVzQVIoOmLRf/uaIgwWNaO/BgZpxHZh67UinClCDUmv8B+KFRTQG6wVhQbH+j6VKRO6ic/z0j2DnXfNMV3zDijPPLeMv4fxQH9q2nuDgDjPuqwygLiSwWEufiuUYoPdqTsUTBgkxuXKiQ4C4JAytF460jQPgn3RaFZbDe9C+aA3t4/e3xRDioROTi9CaIAQCr7jcrPxWPKoKvaWmw/f/Z/G5i1Gn+qJ82kQYJDJe6dG1WZFIQwEu7JDQsgmIAJILWO2KmluQdkAviwe9BJV1GcRAAbZvJ1ofCBQkB3w0yNnKhqkAVmg5pjB7LUIkDhf2aPzGhhDBFptvio8axXkblIIVNr0DWfCxucKBGhrvTF8cfR/X/hkM7612PzXEdag96S59JPgpLqWY2DDz6R4C0AF/irQPcX8pyuzdH6+KKiCc5Lq/wDmORT/AGFIY99GnORDoVleynxXwmH5/wD/2gAMAwECAgIDAgAAEPOP5UM/N/KPM0/1KGH3aJ9HQB2mEM6HxnDBN0NCQ0aU77CdLvy4WiEoe5tFa3lsLUhptFafPkRlJ+qjaPLVOz9yZ/KMMMIwcscMIP/aAAgBAwIBPxD0Mivxk+2h1itIdb36+Ff8H8qv+ifKStm7n7MnzT2p01Ho6n4YTlX6Kl6p181pc+5t7b1/wr9xXNePF/Qj1Nm3Ox+664bjuf30ES3MTdYdNe1bn3o15WDbl/RTZcQFbqF4Mo1cEhTkkSbknoabjTfo/mKi80q17+r0dSS+9j4Pmpm+C70P7UhXX0z6sru7OfmPdot2oQtmE6XfupkPMebVEgiRHJmOKlBEzTRR9GvwtNCiNxMhNjLbaGdtaJ7HxRELZcHL+K5jFeY0emFbztRSPTNr0rtr3f4moYFySY0zCfKreAdwv81MjVdY0/T0GrHBsL4jC5y3CtL2bO/V8Y9GsG7UVgHn+UEyxGMpOp2RUiQSJ0NDSQrlZe9OwZPPaoC4FDO8XxOjtQhkan+C5/nzXkn+VGqfAf3H7rQsfL1fCr1XWBiGzxQDNr4Fn++r465NE2Tauabv1/VLyt6rw7/oZaQMM5XgfkBhttp7YqW3i4raToH0KWc3/D//2gAIAQICAT8Q9FtLLLY+RLgPKV5AHN6vd0j+wn1dTnjiIu3k0oGVMWRsrYNx6/gCoLTi1pmSdny4rb/D6BnL7zfFIPKfLHpZLIHQnyr3MlQ2SRLyH2ajqeiSUM5Gcp1ZByzQBQy8B8G/tWFwJseXaFZo2Kt8lBFRPWDxT7Hx6UPpFPOgfsoh8AfrNGQaVH4Np0sehI9wz0KvTWmZMy6zl9V4nzqQUwh4SzTyHLpUT+F4/RV1K45anGd5tvpSIn/S9c4hdGinSQ+ByVlKmhdfTg9KCmXif9Lwr/g2aBgLV+4ZP3XqadepHgja8pPQVzapoDLz/a1oHgeXpEYDIwAOhRpSCH/OTJs0cwXsek8EUMyJP2baiaJcroR0PfHhNTNP3fVF91qwPaR+KvS+R4d1QrEZnUbc9L08Ts8fm2x6ixouFk3Wj41gEWn5+4rEn4HMgr7R58vt+V1Fez2L/NcV571tHzsJKAQAGxb8P//aAAgBAQIBPxD8X4PkQ92nQTqvuShTwl0Bx/Mo8v8AtHjPOtHuqf4fVeNCPEUICTCMnuf+KxdqMk2f3n/htT9v5AZA6goMO5pGzMu3onX3AdQkUwjStN95lnrtm5FL8UsrKt2NsppizYEYAw1JY1kg89EsklK5W4v4d6bur9T51/M+BVCAMq1tgPN+x5uoFe2JEOUG6XK9WKYXHUgqWxNOOuovP6IxbAdVzNXo3JQapuLmKGVejc1pyxMyo+WTkAsqByFQ2+awRlbOfTiZgRQYYbp2hwe9P+Ht3RGDqWGiSz9bhQZuXH8GpomBDVMDu7rBl4GNUV/NgSaWkaAgtuSfkWJuYpBHGPXMpXdrIfqYLszj698lJ3f7W+dHtQH9yg78JL4NKitwdus5ta1xZRjNdNT+N9gIJrBToHaKsGhhh2CYGeJGzz+ExNP3L637HCusYXo93bqcUeHBu8jBOhxqVIptB5hly00oiGk6nSRrcvzOXBwQV0pv7iYxzihEkuNMZ8LpwE9gxajZl0Drjdvvf0ugLFv+DrUUDQfi2eKgkMMtQygoMKat0K9odRbMhsN4hF3a4oc7IeTR9Fdlk2CV7FZIPBjfKizEXvvi2lrFNMhc82GSA91qYmxmMT4PqUYIUB5dcq3W7TeGhQLl3NGNnCoX+dSIFgvmmY8FH5J7+kciVCxphl2axMa0BIuGGYdnZ4fRn2nVaJzV5132v6pHLGH5JGAQmhMNsZcsUmHqVBmrtuH09678P/CiW2LRPvVFzKig7PAeIXdNo1oxpcnaPqhV0pzWXCdPjelilJGHEjeQQxRdV5+1S/6sCXBA++lasIid2rpu5IqMYDmCjgIKUjp6lsG/wUqZ3SNHUimIPXV6dI14GKwtAnerC7BMffUl8GrxELJk2VId0NSZ1epb9RQ8Wwe4rghUabtTm64IrD+UdTgni1u3qriGhqtg1adbR9GDn9vauZSfT/llA64xJjqBuSfZTgLmWWNX7qMWh3h7ML2FAyL8M5kMR9AB3KKnus4/ocCjSCXEuNPzxfYZK/SyF3ZnKMUWY2YSAHInLEWp8Z0oX/VHgm9Z/tJvkkr/ALgdaVEkWuEvhKZNn4yfMS68FW6KuZO1+DZFxOinSAWCRopvmkxqoDWrK/8ABSNsVfRYxnSPtVwQYGJ9gk4Uhv8Agmeo7Ch+oeKKGD4gMgugedQmOtVgeK/XqkG49gonOfB1Ymn2tRpcu2KWupZhnuxnQqAI652rAOlzC8N9zZq0ZYliPZxqEt9lV0RMTuvE04F6gtJ7TY+DTRKi1AsO4/nyhpt2StrSjoyHFGbUef0B2gE6mi6JOXZG4iopulPEs/AaXrooZAPlLqVjlotVR6YQLk56qkPHJCxf3sKbp4RlwFm1TtddQKZMlh8EReha+ioY6FOHF9V8Aq09DgxJMKY4bUTUDVIu1/g3NXXUtHJzyTemw52ODzbv8b0IoFxInvkfswlmswG8AzMfTDfWtfmvvCdiNTbJWNACHFCXhPcw6RuiTrag6D/wUGLfL2zu/oLAJrsOz1eM+lci1SWdih/vWVTu53j/AEasacm7IxN81nsK+6CgovZydHKcDFElNw0Liun9lOVHWWwrdzQrB/wQ16C26Z+xoyx8L2mo18iri/2hZcpC5OoKxIOgbxvkZ6TVjVloSztFLhaMDDtHN9WBcU2/KnJvEHelsTe0H3S6MPePkkrYjSCuHMa2rkECdBB0CK6BUgZbyx71K2oMLQTqE/V8VEvPgH0HvUu00WfPtWDZ2/Yq01DDktBoAxRRfceZVvQ8tORChHjHJ91MJoLkpT4fPEfHKpFyaTmK3BnTahzb2DsqhC/DlqQO5M6rVtUPM6n0G+Pa8fwb0sYlrWEjyYfNZHDbUZ0BUBx/sQ/IUQdcjTk3WjV1b07ZQbCRh8K0IwQf+Cc7VGLZ0qEnH6zUKZD9PDzHQU2ObHZmxKBSPPJ2SD8pvVbImxZakSvkcJeHo+uZyeMNO/8AGsMaP1EVbns0As+UJsZqySJIthYuqvdqNK8OP6cNWWDjnpMqgBEeRmo8NzR7U+VnKx1xEIzRVkiKFHphF713+GA61zbFAnJ5R1ZobCx6IYwmyuuVG7QGT4GScrj7cTQ/ZuZ/xBwfhEGzpeTxylR1fHZ+UyBA8KW0HS0oxGXMZU/NkGSXBIEuhWLxxwXuTbqhU91lbHVBcTQlYReAfkhrQ1CIUyAf8WlAgyPqsPajAUJpGKQRsC9DMBMvBRrposEgMTcSSv1o4cDacunWBtCK3YeT/G78iFtkUxXx9vpoAXn6xuM4C4L0XeqF4al1EyNZuhx5KuxappJPJEzePoBRQNOLs6lFFSS8jT3hQGoe0QQ1HnSm6tT0kFFMRYb0QGbsPLzzOyhyL3I55DXqTUy1r5NEmgaMta+PbLY8bbv54xZgWHehy9fT/a1SW1jUg2Iy5oRqQ0RukhZc1ZNpxgboQz6XESYBlKwRc3aXn6ZyPb9qt97p4Z4avmMr9k7Y4/8APDD9+9H9LIrAb0mtH4OlfR9fNqHyzZPh/VAR0kF6uXu/n//Z" alt="Wankaner Nagarpalika logo"> <div class="brand-text"><span class="brand-en">Wankaner Nagarpalika (Shroff Book)</span><span class="brand-gu">વાંકાનેર નગરપાલિકા (શ્રોફ બુક)</span></div></div>
+    <div class="nav-item active" data-view="home" onclick="showView('home')"><span class="ico">⌂</span> Home / હોમ</div>
+    <div class="nav-item" data-view="entry" onclick="showView('entry')"><span class="ico">✎</span> Data Entry / ડેટા એન્ટ્રી</div>
+    <div class="nav-item" data-view="summary" onclick="showView('summary')"><span class="ico">▤</span> Account's Summary / ખાતાનો સારાંશ</div>
+    <div class="nav-item" data-view="reports" onclick="showView('reports')"><span class="ico">≡</span> Reports / રીપોર્ટસ</div>
+    <div class="nav-item" data-view="admin" onclick="showView('admin')"><span class="ico">⚙</span> Admin Panel / એડમિન પેનલ</div>
+    <div class="sidebar-foot">Wankaner Nagarpalika<br>Cash Collection System / રોકડ વસૂલાત સિસ્ટમ<br><span class="credit-line">Designed and Developed by Gaurang Thakker (97240 94976)</span></div>
+  </aside>
+
+  <div class="main">
+    <!-- Mobile top bar -->
+    <div class="topbar">
+      <div>
+        <div class="brand"><img class="mark" src="data:image/jpeg;base64,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" alt="Wankaner Nagarpalika logo"> <div class="brand-text"><span class="brand-en">Wankaner Nagarpalika (Shroff Book)</span><span class="brand-gu">વાંકાનેર નગરપાલિકા (શ્રોફ બુક)</span></div></div>
+      </div>
+      <div class="date-pill" id="dateTodayMobile">—</div>
+    </div>
+
+    <!-- Desktop top strip -->
+    <div class="desktop-topstrip">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <span style="font-size:13px;color:var(--text-soft)" id="dateTodayDesktop">—</span>
+        <div class="avatar">👤</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div id="view-home" class="view active">
+      <div class="section-label">Summary / સમરી (<span id="summaryDate">—</span>)</div>
+      <div class="stats">
+        <div class="stat-card credit">
+          <div class="label">Total Credit / કુલ જમા</div>
+          <div class="value">₹ 0</div>
+          <div class="delta">Credit amount / જમા રકમ</div>
+        </div>
+        <div class="stat-card debit">
+          <div class="label">Total Debit / કુલ ઉધાર</div>
+          <div class="value">₹ 0</div>
+          <div class="delta">Debit amount / ઉધાર રકમ</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Total Entry / કુલ એન્ટ્રી</div>
+          <div class="value">0</div>
+          <div class="delta">All entries / કુલ એન્ટ્રી</div>
+        </div>
+        <div class="stat-card balance">
+          <div class="label">Total Balance / કુલ બાકી</div>
+          <div class="value">₹ 0</div>
+          <div class="delta">Credit − Debit / જમા – ઉધાર</div>
+        </div>
+      </div>
+
+      <div class="section-label">Last Entry / છેલ્લી એન્ટ્રી</div>
+      <div class="last-entry-card">
+        <div class="le-row">
+          <div class="le-field"><span>Date / તારીખ</span><b>—</b></div>
+          <div class="le-field"><span>Type / પ્રકાર</span><b>—</b></div>
+        </div>
+        <div class="le-row">
+          <div class="le-field wide"><span>Particular / વિગત</span><b>No entry yet / હજુ કોઈ એન્ટ્રી નથી</b></div>
+          <div class="le-field amt-field"><span>Amount / રકમ</span><b>₹ —</b></div>
+        </div>
+      </div>
+      </div>
+
+      <div id="view-entry" class="view">
+        <div class="section-label">Data Entry / ડેટા એન્ટ્રી</div>
+        <div class="entry-form">
+          <div class="form-group">
+            <label>Date / તારીખ</label>
+            <div class="date-input-wrap">
+              <input type="text" id="entryDate" class="form-input" placeholder="DD/MM/YYYY" readonly onclick="openDatePicker()">
+              <button type="button" class="date-picker-btn" onclick="openDatePicker()">📅</button>
+              <input type="date" id="entryDatePicker" class="hidden-date-input" onchange="onDatePicked()">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Entry Type / એન્ટ્રીનો પ્રકાર</label>
+            <div class="radio-group">
+              <label class="radio-option"><input type="radio" name="entryType" value="Credit" checked> Credit / જમા</label>
+              <label class="radio-option"><input type="radio" name="entryType" value="Debit"> Debit / ઉધાર</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Account / ખાતું</label>
+            <select id="entryAccount" class="form-input">
+              <option value="">Select Account / ખાતું પસંદ કરો</option>
+          <option value="ગ્રાન્ટ SBS સેવિંગ — 56078004828">ગ્રાન્ટ SBS સેવિંગ — 56078004828</option>
+          <option value="SBS કરન્ટ — 56078000313">SBS કરન્ટ — 56078000313</option>
+          <option value="ગ્રાન્ટ SBS સેવિંગ — 56078004487">ગ્રાન્ટ SBS સેવિંગ — 56078004487</option>
+          <option value="BOB સેવિંગ — 93720100001113">BOB સેવિંગ — 93720100001113</option>
+          <option value="BOB કરન્ટ — 93720200000156">BOB કરન્ટ — 93720200000156</option>
+          <option value="ગ્રાન્ટ SBI સેવિંગ — 10795479093">ગ્રાન્ટ SBI સેવિંગ — 10795479093</option>
+          <option value="SBI સેવિંગ — 10795462068">SBI સેવિંગ — 10795462068</option>
+          <option value="ગ્રાન્ટ SBS સેવિંગ — 56078004873">ગ્રાન્ટ SBS સેવિંગ — 56078004873</option>
+          <option value="ગ્રાન્ટ SBI કરન્ટ (યુ.બી.એસ.) — 10795459113">ગ્રાન્ટ SBI કરન્ટ (યુ.બી.એસ.) — 10795459113</option>
+          <option value="ગ્રાન્ટ SBS કરન્ટ (S.J.S.R.Y.) — 56078000324">ગ્રાન્ટ SBS કરન્ટ (S.J.S.R.Y.) — 56078000324</option>
+          <option value="BOB સેવિંગ — 93720100001363">BOB સેવિંગ — 93720100001363</option>
+          <option value="BOB ગ્રાન્ટ સેવિંગ — 93720100007677">BOB ગ્રાન્ટ સેવિંગ — 93720100007677</option>
+          <option value="BOB ગ્રાન્ટ સેવિંગ — 93720100001679">BOB ગ્રાન્ટ સેવિંગ — 93720100001679</option>
+          <option value="ગ્રાન્ટ SBS સેવિંગ — 56078004476">ગ્રાન્ટ SBS સેવિંગ — 56078004476</option>
+          <option value="BOB ગ્રાન્ટ સેવિંગ (I.D.S.M.T) — 93720100007734">BOB ગ્રાન્ટ સેવિંગ (I.D.S.M.T) — 93720100007734</option>
+          <option value="BOB ગ્રાન્ટ સેવિંગ — 93720100002608">BOB ગ્રાન્ટ સેવિંગ — 93720100002608</option>
+          <option value="BOB ગ્રાન્ટ સેવિંગ — 93720100000564">BOB ગ્રાન્ટ સેવિંગ — 93720100000564</option>
+          <option value="BOB સેવિંગ — 93720100001861">BOB સેવિંગ — 93720100001861</option>
+          <option value="BOB સેવિંગ — 93720100002542">BOB સેવિંગ — 93720100002542</option>
+          <option value="BOB સેવિંગ (રેગ પીકર્સ યોજના) — 93720100009798">BOB સેવિંગ (રેગ પીકર્સ યોજના) — 93720100009798</option>
+          <option value="BOB મિશન મંગલમ — 93720100002957">BOB મિશન મંગલમ — 93720100002957</option>
+          <option value="BOB 13મું નાણાપંચ — 93720100010319">BOB 13મું નાણાપંચ — 93720100010319</option>
+          <option value="એક્સિસ બેંક — 91201006430924">એક્સિસ બેંક — 91201006430924</option>
+          <option value="ઇમ્પેક્ટ ફી એક્સિસ બેંક — 913010046217688">ઇમ્પેક્ટ ફી એક્સિસ બેંક — 913010046217688</option>
+          <option value="ICICI બેંક — 118401000091">ICICI બેંક — 118401000091</option>
+          <option value="BOB 14મું નાણાપંચ — 93720100018806">BOB 14મું નાણાપંચ — 93720100018806</option>
+          <option value="BOB નિગુ વ્યય ગ્રાંટ — 93720100018878">BOB નિગુ વ્યય ગ્રાંટ — 93720100018878</option>
+          <option value="BOB ઉમ્મીદ ગ્રાન્ટ — 93720100018877">BOB ઉમ્મીદ ગ્રાન્ટ — 93720100018877</option>
+          <option value="ICICI બેંક (સુ.જ.મુ.મ.) — 118401000528">ICICI બેંક (સુ.જ.મુ.મ.) — 118401000528</option>
+          <option value="ICICI બેંક (ગુ.અ.લા.મિ.) — 36240100079">ICICI બેંક (ગુ.અ.લા.મિ.) — 36240100079</option>
+          <option value="ICICI બેંક (રોડ રિસર્ફેસિંગ ગ્રાન્ટ) — 249801000175">ICICI બેંક (રોડ રિસર્ફેસિંગ ગ્રાન્ટ) — 249801000175</option>
+          <option value="SBI ONLINE A/C — 36814553182">SBI ONLINE A/C — 36814553182</option>
+          <option value="રોકડ">રોકડ</option>
+          <option value="ફિક્સ ડિપોજિટ">ફિક્સ ડિપોજિટ</option>
+          <option value="SBI સંસદ સભ્ય ગ્રાન્ટ — 38573408776">SBI સંસદ સભ્ય ગ્રાન્ટ — 38573408776</option>
+          <option value="BOB A/C — 07650200000929">BOB A/C — 07650200000929</option>
+          <option value="HDFC A/C — 50100228657117">HDFC A/C — 50100228657117</option>
+          <option value="ICICI (૧૫ મું નાણાપંચ) — 118401000659">ICICI (૧૫ મું નાણાપંચ) — 118401000659</option>
+          <option value="BOB સેન્સસ ૨૦૨૧ — 93720100025185">BOB સેન્સસ ૨૦૨૧ — 93720100025185</option>
+          <option value="HDFC ગ્રાંટ સેવિંગ — 50100435053331">HDFC ગ્રાંટ સેવિંગ — 50100435053331</option>
+          <option value="ICICI (મુખ્ય મંત્રી મહિલા ઉત્કર્ષ યોજના) — 118401000776">ICICI (મુખ્ય મંત્રી મહિલા ઉત્કર્ષ યોજના) — 118401000776</option>
+          <option value="ICICI (SBM GRANT) — 118401001232">ICICI (SBM GRANT) — 118401001232</option>
+          <option value="AXIS (15TH FINANCE) — 922010015263872">AXIS (15TH FINANCE) — 922010015263872</option>
+          <option value="HDFC (રોડ રીસર્ફેસિંગ) — 50100527807206">HDFC (રોડ રીસર્ફેસિંગ) — 50100527807206</option>
+          <option value="AXIS (AMRUT 2.0) — 922010028941330">AXIS (AMRUT 2.0) — 922010028941330</option>
+          <option value="INDIAN (GULM GRANT) — 7054388250">INDIAN (GULM GRANT) — 7054388250</option>
+          <option value="HDFC (GRANT) — 50100576895576">HDFC (GRANT) — 50100576895576</option>
+          <option value="HDFC (CURRENT) — 99900999123456">HDFC (CURRENT) — 99900999123456</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Amount (₹) / રકમ (₹)</label>
+            <input type="number" id="entryAmount" class="form-input" placeholder="Enter amount" min="0" step="0.01">
+          </div>
+
+          <div class="form-group">
+            <label>Particular / વિગત</label>
+            <textarea id="entryParticular" class="form-input" rows="3" placeholder="Enter particular / description"></textarea>
+          </div>
+
+          <button class="save-btn" onclick="openConfirm()">Save Entry / એન્ટ્રી સેવ કરો</button>
+        </div>
+      </div>
+
+      <div id="view-summary" class="view">
+        <div class="section-label">Account's Summary — Latest Balance / ખાતાનો સારાંશ — છેલ્લી બાકી</div>
+        <div class="acct-list">
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ગ્રાન્ટ SBS સેવિંગ</div>
+            <div class="acct-no">A/C — 56078004828</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">SBS કરન્ટ</div>
+            <div class="acct-no">A/C — 56078000313</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ગ્રાન્ટ SBS સેવિંગ</div>
+            <div class="acct-no">A/C — 56078004487</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB સેવિંગ</div>
+            <div class="acct-no">A/C — 93720100001113</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB કરન્ટ</div>
+            <div class="acct-no">A/C — 93720200000156</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ગ્રાન્ટ SBI સેવિંગ</div>
+            <div class="acct-no">A/C — 10795479093</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">SBI સેવિંગ</div>
+            <div class="acct-no">A/C — 10795462068</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ગ્રાન્ટ SBS સેવિંગ</div>
+            <div class="acct-no">A/C — 56078004873</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ગ્રાન્ટ SBI કરન્ટ (યુ.બી.એસ.)</div>
+            <div class="acct-no">A/C — 10795459113</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ગ્રાન્ટ SBS કરન્ટ (S.J.S.R.Y.)</div>
+            <div class="acct-no">A/C — 56078000324</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB સેવિંગ</div>
+            <div class="acct-no">A/C — 93720100001363</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB ગ્રાન્ટ સેવિંગ</div>
+            <div class="acct-no">A/C — 93720100007677</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB ગ્રાન્ટ સેવિંગ</div>
+            <div class="acct-no">A/C — 93720100001679</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ગ્રાન્ટ SBS સેવિંગ</div>
+            <div class="acct-no">A/C — 56078004476</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB ગ્રાન્ટ સેવિંગ (I.D.S.M.T)</div>
+            <div class="acct-no">A/C — 93720100007734</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB ગ્રાન્ટ સેવિંગ</div>
+            <div class="acct-no">A/C — 93720100002608</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB ગ્રાન્ટ સેવિંગ</div>
+            <div class="acct-no">A/C — 93720100000564</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB સેવિંગ</div>
+            <div class="acct-no">A/C — 93720100001861</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB સેવિંગ</div>
+            <div class="acct-no">A/C — 93720100002542</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB સેવિંગ (રેગ પીકર્સ યોજના)</div>
+            <div class="acct-no">A/C — 93720100009798</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB મિશન મંગલમ</div>
+            <div class="acct-no">A/C — 93720100002957</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB 13મું નાણાપંચ</div>
+            <div class="acct-no">A/C — 93720100010319</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">એક્સિસ બેંક</div>
+            <div class="acct-no">A/C — 91201006430924</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ઇમ્પેક્ટ ફી એક્સિસ બેંક</div>
+            <div class="acct-no">A/C — 913010046217688</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ICICI બેંક</div>
+            <div class="acct-no">A/C — 118401000091</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB 14મું નાણાપંચ</div>
+            <div class="acct-no">A/C — 93720100018806</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB નિગુ વ્યય ગ્રાંટ</div>
+            <div class="acct-no">A/C — 93720100018878</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB ઉમ્મીદ ગ્રાન્ટ</div>
+            <div class="acct-no">A/C — 93720100018877</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ICICI બેંક (સુ.જ.મુ.મ.)</div>
+            <div class="acct-no">A/C — 118401000528</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ICICI બેંક (ગુ.અ.લા.મિ.)</div>
+            <div class="acct-no">A/C — 36240100079</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ICICI બેંક (રોડ રિસર્ફેસિંગ ગ્રાન્ટ)</div>
+            <div class="acct-no">A/C — 249801000175</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">SBI ONLINE A/C</div>
+            <div class="acct-no">A/C — 36814553182</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">રોકડ</div>
+            <div class="acct-no">—</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ફિક્સ ડિપોજિટ</div>
+            <div class="acct-no">—</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">SBI સંસદ સભ્ય ગ્રાન્ટ</div>
+            <div class="acct-no">A/C — 38573408776</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB A/C</div>
+            <div class="acct-no">A/C — 07650200000929</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">HDFC A/C</div>
+            <div class="acct-no">A/C — 50100228657117</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ICICI (૧૫ મું નાણાપંચ)</div>
+            <div class="acct-no">A/C — 118401000659</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">BOB સેન્સસ ૨૦૨૧</div>
+            <div class="acct-no">A/C — 93720100025185</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">HDFC ગ્રાંટ સેવિંગ</div>
+            <div class="acct-no">A/C — 50100435053331</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ICICI (મુખ્ય મંત્રી મહિલા ઉત્કર્ષ યોજના)</div>
+            <div class="acct-no">A/C — 118401000776</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">ICICI (SBM GRANT)</div>
+            <div class="acct-no">A/C — 118401001232</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">AXIS (15TH FINANCE)</div>
+            <div class="acct-no">A/C — 922010015263872</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">HDFC (રોડ રીસર્ફેસિંગ)</div>
+            <div class="acct-no">A/C — 50100527807206</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">AXIS (AMRUT 2.0)</div>
+            <div class="acct-no">A/C — 922010028941330</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">INDIAN (GULM GRANT)</div>
+            <div class="acct-no">A/C — 7054388250</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">HDFC (GRANT)</div>
+            <div class="acct-no">A/C — 50100576895576</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        <div class="acct-row">
+          <div class="acct-info">
+            <div class="acct-name">HDFC (CURRENT)</div>
+            <div class="acct-no">A/C — 99900999123456</div>
+          </div>
+          <div class="acct-balance">₹ 0</div>
+        </div>
+        </div>
+      </div>
+
+      <div id="view-reports" class="view">
+        <div class="section-label">Reports / રીપોર્ટસ</div>
+        <div class="placeholder-card">Reports will be added here. / રીપોર્ટસ પછીથી ઉમેરાશે.</div>
+      </div>
+
+      <div id="view-admin" class="view">
+        <div class="section-label">Admin Panel / એડમિન પેનલ</div>
+        <div class="placeholder-card">Admin settings will be added here. / એડમિન સેટિંગ્સ પછીથી ઉમેરાશે.</div>
+      </div>
+
+      <div class="app-footer-credit">Designed and Developed by Gaurang Thakker (97240 94976)</div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile bottom nav -->
+<div class="bottomnav">
+  <div class="bn-item active" data-view="home" onclick="showView('home')"><span class="ico">⌂</span>Home/હોમ</div>
+  <div class="bn-item" data-view="entry" onclick="showView('entry')"><span class="ico">✎</span>Entry/એન્ટ્રી</div>
+  <div class="bn-item" data-view="summary" onclick="showView('summary')"><span class="ico">▤</span>Summary/સારાંશ</div>
+  <div class="bn-item" data-view="reports" onclick="showView('reports')"><span class="ico">≡</span>Reports/રીપોર્ટસ</div>
+  <div class="bn-item" data-view="admin" onclick="showView('admin')"><span class="ico">⚙</span>Admin/એડમિન</div>
+</div>
+
+<!-- Confirm Entry Modal -->
+<div id="confirmModal" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-title">Confirm Entry / એન્ટ્રી કન્ફર્મ કરો</div>
+    <div class="modal-body">
+      <div class="modal-row"><span>Date / તારીખ</span><b id="cfDate">—</b></div>
+      <div class="modal-row"><span>Type / પ્રકાર</span><b id="cfType">—</b></div>
+      <div class="modal-row"><span>Amount / રકમ</span><b id="cfAmount">—</b></div>
+      <div class="modal-row wide"><span>Account / ખાતું</span><b id="cfAccount">—</b></div>
+      <div class="modal-row wide"><span>Particular / વિગત</span><b id="cfParticular">—</b></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-edit" onclick="closeConfirm()">Edit / બદલો</button>
+      <button class="btn-confirm" onclick="confirmEntry()">Confirm / કન્ફર્મ</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">Entry saved / એન્ટ્રી સેવ થઈ</div>
+
+<script>
+function showView(name){
+  document.querySelectorAll('.view').forEach(function(v){
+    v.classList.toggle('active', v.id === 'view-' + name);
+  });
+  document.querySelectorAll('.nav-item, .bn-item').forEach(function(el){
+    el.classList.toggle('active', el.getAttribute('data-view') === name);
+  });
+}
+
+function todayDDMMYYYY(){
+  var d = new Date();
+  var dd = String(d.getDate()).padStart(2,'0');
+  var mm = String(d.getMonth()+1).padStart(2,'0');
+  var yyyy = d.getFullYear();
+  return dd + '/' + mm + '/' + yyyy;
+}
+
+function todayYYYYMMDD(){
+  var d = new Date();
+  var dd = String(d.getDate()).padStart(2,'0');
+  var mm = String(d.getMonth()+1).padStart(2,'0');
+  var yyyy = d.getFullYear();
+  return yyyy + '-' + mm + '-' + dd;
+}
+
+function yyyymmddToDDMMYYYY(v){
+  var parts = v.split('-');
+  if(parts.length !== 3) return v;
+  return parts[2] + '/' + parts[1] + '/' + parts[0];
+}
+
+function isFutureDate(ddmmyyyy){
+  var parts = ddmmyyyy.split('/');
+  if(parts.length !== 3) return false;
+  var entered = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+  var today = new Date();
+  today.setHours(0,0,0,0);
+  entered.setHours(0,0,0,0);
+  return entered.getTime() > today.getTime();
+}
+
+function openDatePicker(){
+  var picker = document.getElementById('entryDatePicker');
+  picker.max = todayYYYYMMDD();
+  if(typeof picker.showPicker === 'function'){
+    picker.showPicker();
+  } else {
+    picker.focus();
+    picker.click();
+  }
+}
+
+function onDatePicked(){
+  var picker = document.getElementById('entryDatePicker');
+  if(!picker.value) return;
+  var ddmmyyyy = yyyymmddToDDMMYYYY(picker.value);
+  if(isFutureDate(ddmmyyyy)){
+    alert('Future date is not allowed. / ભવિષ્યની તારીખ માન્ય નથી.');
+    picker.value = '';
+    return;
+  }
+  document.getElementById('entryDate').value = ddmmyyyy;
+}
+
+function refreshTodayDisplays(){
+  var ddmmyyyy = todayDDMMYYYY();
+  var mobileEl = document.getElementById('dateTodayMobile');
+  var desktopEl = document.getElementById('dateTodayDesktop');
+  var summaryEl = document.getElementById('summaryDate');
+  if(mobileEl) mobileEl.textContent = ddmmyyyy;
+  if(desktopEl) desktopEl.textContent = ddmmyyyy;
+  if(summaryEl) summaryEl.textContent = ddmmyyyy;
+}
+
+refreshTodayDisplays();
+document.getElementById('entryDate').value = todayDDMMYYYY();
+document.getElementById('entryDatePicker').max = todayYYYYMMDD();
+
+function openConfirm(){
+  var date = document.getElementById('entryDate').value.trim();
+  var type = document.querySelector('input[name="entryType"]:checked').value;
+  var account = document.getElementById('entryAccount').value;
+  var amount = document.getElementById('entryAmount').value;
+  var particular = document.getElementById('entryParticular').value.trim();
+
+  if(!account){ alert('Please select an account. / કૃપા કરીને ખાતું પસંદ કરો.'); return; }
+  if(!amount || Number(amount) <= 0){ alert('Please enter a valid amount. / કૃપા કરીને યોગ્ય રકમ દાખલ કરો.'); return; }
+  if(isFutureDate(date)){ alert('Future date is not allowed. / ભવિષ્યની તારીખ માન્ય નથી.'); return; }
+
+  document.getElementById('cfDate').textContent = date || '—';
+  document.getElementById('cfType').textContent = type;
+  document.getElementById('cfAccount').textContent = account;
+  document.getElementById('cfAmount').textContent = '₹ ' + amount;
+  document.getElementById('cfParticular').textContent = particular || '—';
+
+  document.getElementById('confirmModal').classList.add('active');
+}
+
+function closeConfirm(){
+  document.getElementById('confirmModal').classList.remove('active');
+}
+
+function confirmEntry(){
+  // TODO: send this entry to the Google Sheet (Apps Script Web App URL) once linked.
+  var entry = {
+    date: document.getElementById('entryDate').value.trim(),
+    type: document.querySelector('input[name="entryType"]:checked').value,
+    account: document.getElementById('entryAccount').value,
+    amount: document.getElementById('entryAmount').value,
+    particular: document.getElementById('entryParticular').value.trim()
+  };
+
+  closeConfirm();
+
+  // Reset form for next entry
+  document.getElementById('entryAccount').value = '';
+  document.getElementById('entryAmount').value = '';
+  document.getElementById('entryParticular').value = '';
+  document.getElementById('entryDate').value = todayDDMMYYYY();
+
+  var toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(function(){ toast.classList.remove('show'); }, 2200);
+}
+</script>
+</body>
+</html>
