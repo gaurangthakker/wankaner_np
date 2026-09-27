@@ -500,6 +500,56 @@
   .btn-edit{background:var(--bg);border:1px solid var(--line);color:var(--text);}
   .btn-confirm{background:var(--cyan-500);color:var(--navy-950);}
 
+  /* Insufficient balance modal */
+  .ib-card{
+    text-align:center;
+    border-top:4px solid var(--cyan-500);
+    background:linear-gradient(180deg,var(--surface) 0%,var(--surface) 100%);
+  }
+  .ib-icon{
+    width:52px;height:52px;
+    margin:0 auto 12px;
+    border-radius:50%;
+    background:var(--navy-900);
+    color:var(--cyan-300);
+    font-size:26px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .ib-card .modal-title{
+    color:var(--navy-900);
+    margin-bottom:10px;
+  }
+  :root[data-theme="dark"] .ib-card .modal-title{color:#fff;}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ib-card .modal-title{color:#fff;}}
+  .ib-message{
+    font-size:13px;
+    line-height:1.6;
+    color:var(--text-soft);
+    margin-bottom:16px;
+  }
+  .ib-details{
+    text-align:left;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 14px;
+    margin-bottom:18px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .ib-row{
+    display:flex;justify-content:space-between;gap:12px;
+    font-size:12.5px;
+  }
+  .ib-row span{color:var(--text-soft);flex-shrink:0;}
+  .ib-row b{text-align:right;color:var(--navy-900);font-family:var(--font-head);}
+  :root[data-theme="dark"] .ib-row b{color:#fff;}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ib-row b{color:#fff;}}
+  .ib-row.ib-short{border-top:1px solid var(--line);padding-top:8px;}
+  .ib-row.ib-short b{color:#d9534f;}
+  .ib-ok-btn{background:var(--navy-900);color:#fff;}
+
   /* Admin password modal */
   .admin-password-overlay{background:rgba(4,14,28,0.7);}
   .admin-password-card{
@@ -768,35 +818,34 @@
       <div class="stats">
         <div class="stat-card credit">
           <div class="label">Total Credit / કુલ જમા</div>
-          <div class="value">₹ 0</div>
+          <div class="value" id="statTotalCredit">₹ 0</div>
           <div class="delta">Credit amount / જમા રકમ</div>
         </div>
         <div class="stat-card debit">
           <div class="label">Total Debit / કુલ ઉધાર</div>
-          <div class="value">₹ 0</div>
+          <div class="value" id="statTotalDebit">₹ 0</div>
           <div class="delta">Debit amount / ઉધાર રકમ</div>
         </div>
         <div class="stat-card">
           <div class="label">Total Entry / કુલ એન્ટ્રી</div>
-          <div class="value">0</div>
+          <div class="value" id="statTotalEntry">0</div>
           <div class="delta">All entries / કુલ એન્ટ્રી</div>
         </div>
         <div class="stat-card balance">
-          <div class="label">Total Balance / કુલ બાકી</div>
-          <div class="value">₹ 0</div>
-          <div class="delta">Credit − Debit / જમા – ઉધાર</div>
+          <div class="label">Total Balance / કુલ બેલેન્સ</div>
+          <div class="value" id="statTotalBalance">₹ 0</div>
         </div>
       </div>
 
       <div class="section-label">Last Entry / છેલ્લી એન્ટ્રી</div>
       <div class="last-entry-card">
         <div class="le-row">
-          <div class="le-field"><span>Date / તારીખ</span><b>—</b></div>
-          <div class="le-field"><span>Type / પ્રકાર</span><b>—</b></div>
+          <div class="le-field"><span>Date / તારીખ</span><b id="leDate">—</b></div>
+          <div class="le-field"><span>Type / પ્રકાર</span><b id="leType">—</b></div>
         </div>
         <div class="le-row">
-          <div class="le-field wide"><span>Particular / વિગત</span><b>No entry yet / હજુ કોઈ એન્ટ્રી નથી</b></div>
-          <div class="le-field amt-field"><span>Amount / રકમ</span><b>₹ —</b></div>
+          <div class="le-field wide"><span>Particular / વિગત</span><b id="leParticular">No entry yet / હજુ કોઈ એન્ટ્રી નથી</b></div>
+          <div class="le-field amt-field"><span>Amount / રકમ</span><b id="leAmount">₹ —</b></div>
         </div>
       </div>
       </div>
@@ -825,54 +874,6 @@
             <label>Account / ખાતું</label>
             <select id="entryAccount" class="form-input">
               <option value="">Select Account / ખાતું પસંદ કરો</option>
-          <option value="ગ્રાન્ટ SBS સેવિંગ — 56078004828">ગ્રાન્ટ SBS સેવિંગ — 56078004828</option>
-          <option value="SBS કરન્ટ — 56078000313">SBS કરન્ટ — 56078000313</option>
-          <option value="ગ્રાન્ટ SBS સેવિંગ — 56078004487">ગ્રાન્ટ SBS સેવિંગ — 56078004487</option>
-          <option value="BOB સેવિંગ — 93720100001113">BOB સેવિંગ — 93720100001113</option>
-          <option value="BOB કરન્ટ — 93720200000156">BOB કરન્ટ — 93720200000156</option>
-          <option value="ગ્રાન્ટ SBI સેવિંગ — 10795479093">ગ્રાન્ટ SBI સેવિંગ — 10795479093</option>
-          <option value="SBI સેવિંગ — 10795462068">SBI સેવિંગ — 10795462068</option>
-          <option value="ગ્રાન્ટ SBS સેવિંગ — 56078004873">ગ્રાન્ટ SBS સેવિંગ — 56078004873</option>
-          <option value="ગ્રાન્ટ SBI કરન્ટ (યુ.બી.એસ.) — 10795459113">ગ્રાન્ટ SBI કરન્ટ (યુ.બી.એસ.) — 10795459113</option>
-          <option value="ગ્રાન્ટ SBS કરન્ટ (S.J.S.R.Y.) — 56078000324">ગ્રાન્ટ SBS કરન્ટ (S.J.S.R.Y.) — 56078000324</option>
-          <option value="BOB સેવિંગ — 93720100001363">BOB સેવિંગ — 93720100001363</option>
-          <option value="BOB ગ્રાન્ટ સેવિંગ — 93720100007677">BOB ગ્રાન્ટ સેવિંગ — 93720100007677</option>
-          <option value="BOB ગ્રાન્ટ સેવિંગ — 93720100001679">BOB ગ્રાન્ટ સેવિંગ — 93720100001679</option>
-          <option value="ગ્રાન્ટ SBS સેવિંગ — 56078004476">ગ્રાન્ટ SBS સેવિંગ — 56078004476</option>
-          <option value="BOB ગ્રાન્ટ સેવિંગ (I.D.S.M.T) — 93720100007734">BOB ગ્રાન્ટ સેવિંગ (I.D.S.M.T) — 93720100007734</option>
-          <option value="BOB ગ્રાન્ટ સેવિંગ — 93720100002608">BOB ગ્રાન્ટ સેવિંગ — 93720100002608</option>
-          <option value="BOB ગ્રાન્ટ સેવિંગ — 93720100000564">BOB ગ્રાન્ટ સેવિંગ — 93720100000564</option>
-          <option value="BOB સેવિંગ — 93720100001861">BOB સેવિંગ — 93720100001861</option>
-          <option value="BOB સેવિંગ — 93720100002542">BOB સેવિંગ — 93720100002542</option>
-          <option value="BOB સેવિંગ (રેગ પીકર્સ યોજના) — 93720100009798">BOB સેવિંગ (રેગ પીકર્સ યોજના) — 93720100009798</option>
-          <option value="BOB મિશન મંગલમ — 93720100002957">BOB મિશન મંગલમ — 93720100002957</option>
-          <option value="BOB 13મું નાણાપંચ — 93720100010319">BOB 13મું નાણાપંચ — 93720100010319</option>
-          <option value="એક્સિસ બેંક — 91201006430924">એક્સિસ બેંક — 91201006430924</option>
-          <option value="ઇમ્પેક્ટ ફી એક્સિસ બેંક — 913010046217688">ઇમ્પેક્ટ ફી એક્સિસ બેંક — 913010046217688</option>
-          <option value="ICICI બેંક — 118401000091">ICICI બેંક — 118401000091</option>
-          <option value="BOB 14મું નાણાપંચ — 93720100018806">BOB 14મું નાણાપંચ — 93720100018806</option>
-          <option value="BOB નિગુ વ્યય ગ્રાંટ — 93720100018878">BOB નિગુ વ્યય ગ્રાંટ — 93720100018878</option>
-          <option value="BOB ઉમ્મીદ ગ્રાન્ટ — 93720100018877">BOB ઉમ્મીદ ગ્રાન્ટ — 93720100018877</option>
-          <option value="ICICI બેંક (સુ.જ.મુ.મ.) — 118401000528">ICICI બેંક (સુ.જ.મુ.મ.) — 118401000528</option>
-          <option value="ICICI બેંક (ગુ.અ.લા.મિ.) — 36240100079">ICICI બેંક (ગુ.અ.લા.મિ.) — 36240100079</option>
-          <option value="ICICI બેંક (રોડ રિસર્ફેસિંગ ગ્રાન્ટ) — 249801000175">ICICI બેંક (રોડ રિસર્ફેસિંગ ગ્રાન્ટ) — 249801000175</option>
-          <option value="SBI ONLINE A/C — 36814553182">SBI ONLINE A/C — 36814553182</option>
-          <option value="રોકડ">રોકડ</option>
-          <option value="ફિક્સ ડિપોજિટ">ફિક્સ ડિપોજિટ</option>
-          <option value="SBI સંસદ સભ્ય ગ્રાન્ટ — 38573408776">SBI સંસદ સભ્ય ગ્રાન્ટ — 38573408776</option>
-          <option value="BOB A/C — 07650200000929">BOB A/C — 07650200000929</option>
-          <option value="HDFC A/C — 50100228657117">HDFC A/C — 50100228657117</option>
-          <option value="ICICI (૧૫ મું નાણાપંચ) — 118401000659">ICICI (૧૫ મું નાણાપંચ) — 118401000659</option>
-          <option value="BOB સેન્સસ ૨૦૨૧ — 93720100025185">BOB સેન્સસ ૨૦૨૧ — 93720100025185</option>
-          <option value="HDFC ગ્રાંટ સેવિંગ — 50100435053331">HDFC ગ્રાંટ સેવિંગ — 50100435053331</option>
-          <option value="ICICI (મુખ્ય મંત્રી મહિલા ઉત્કર્ષ યોજના) — 118401000776">ICICI (મુખ્ય મંત્રી મહિલા ઉત્કર્ષ યોજના) — 118401000776</option>
-          <option value="ICICI (SBM GRANT) — 118401001232">ICICI (SBM GRANT) — 118401001232</option>
-          <option value="AXIS (15TH FINANCE) — 922010015263872">AXIS (15TH FINANCE) — 922010015263872</option>
-          <option value="HDFC (રોડ રીસર્ફેસિંગ) — 50100527807206">HDFC (રોડ રીસર્ફેસિંગ) — 50100527807206</option>
-          <option value="AXIS (AMRUT 2.0) — 922010028941330">AXIS (AMRUT 2.0) — 922010028941330</option>
-          <option value="INDIAN (GULM GRANT) — 7054388250">INDIAN (GULM GRANT) — 7054388250</option>
-          <option value="HDFC (GRANT) — 50100576895576">HDFC (GRANT) — 50100576895576</option>
-          <option value="HDFC (CURRENT) — 99900999123456">HDFC (CURRENT) — 99900999123456</option>
             </select>
           </div>
 
@@ -990,6 +991,28 @@
   </div>
 </div>
 
+<!-- Insufficient Balance Modal -->
+<div id="insufficientBalanceModal" class="modal-overlay">
+  <div class="modal-card ib-card">
+    <div class="ib-icon">⚠</div>
+    <div class="modal-title">Insufficient Balance / અપૂરતું બેલેન્સ</div>
+    <div class="ib-message">
+      This account does not have enough balance for this debit entry.<br>
+      આ ખાતામાં આ ઉધાર એન્ટ્રી માટે પૂરતું બેલેન્સ નથી.
+    </div>
+    <div class="ib-details">
+      <div class="ib-row"><span>Account / ખાતું</span><b id="ibAccount">—</b></div>
+      <div class="ib-row"><span>Account No / ખાતા નંબર</span><b id="ibAccountNo">—</b></div>
+      <div class="ib-row"><span>Available Balance / ઉપલબ્ધ બેલેન્સ</span><b id="ibAvailable">—</b></div>
+      <div class="ib-row"><span>Entry Amount / એન્ટ્રી રકમ</span><b id="ibRequested">—</b></div>
+      <div class="ib-row ib-short"><span>Shortfall / ખૂટતી રકમ</span><b id="ibShortfall">—</b></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-confirm ib-ok-btn" onclick="closeInsufficientBalance()">OK / ઠીક છે</button>
+    </div>
+  </div>
+</div>
+
 <!-- Admin Password Modal -->
 <div id="adminPasswordModal" class="modal-overlay admin-password-overlay">
   <div class="modal-card admin-password-card">
@@ -1007,6 +1030,11 @@
 <div id="toast" class="toast">Entry saved / એન્ટ્રી સેવ થઈ</div>
 
 <script>
+/* ================= CONFIG ================= */
+/* Paste your deployed Google Apps Script Web App URL below (ends in /exec).
+   See the Code.gs file for the backend code + deployment steps. */
+var API_URL = 'https://script.google.com/macros/s/AKfycbz3SuAU-XUoftU-MRfUGsEl-pP7-RUsWZ-eJ8yx1_oMoFo8sC_Wl1qr-iN-MmPtYQWd/exec';
+
 function showView(name){
   document.querySelectorAll('.view').forEach(function(v){
     v.classList.toggle('active', v.id === 'view-' + name);
@@ -1086,7 +1114,9 @@ document.getElementById('entryDatePicker').max = todayYYYYMMDD();
 function openConfirm(){
   var date = document.getElementById('entryDate').value.trim();
   var type = document.querySelector('input[name="entryType"]:checked').value;
-  var account = document.getElementById('entryAccount').value;
+  var accountSelect = document.getElementById('entryAccount');
+  var account = accountSelect.value;
+  var accountLabel = accountSelect.options[accountSelect.selectedIndex] ? accountSelect.options[accountSelect.selectedIndex].text : account;
   var amount = document.getElementById('entryAmount').value;
   var particular = document.getElementById('entryParticular').value.trim();
 
@@ -1094,9 +1124,23 @@ function openConfirm(){
   if(!amount || Number(amount) <= 0){ alert('Please enter a valid amount. / કૃપા કરીને યોગ્ય રકમ દાખલ કરો.'); return; }
   if(isFutureDate(date)){ alert('Future date is not allowed. / ભવિષ્યની તારીખ માન્ય નથી.'); return; }
 
+  if(type === 'Debit'){
+    var acc = ACCOUNTS.find(function(a){ return a.key === account; });
+    var currentBalance = acc ? (Number(acc.balance) || 0) : 0;
+    if(Number(amount) > currentBalance){
+      showInsufficientBalance({
+        name: acc ? acc.name : accountLabel,
+        number: acc ? acc.number : '',
+        balance: currentBalance,
+        requested: Number(amount)
+      });
+      return;
+    }
+  }
+
   document.getElementById('cfDate').textContent = date || '—';
   document.getElementById('cfType').textContent = type;
-  document.getElementById('cfAccount').textContent = account;
+  document.getElementById('cfAccount').textContent = accountLabel;
   document.getElementById('cfAmount').textContent = '₹ ' + amount;
   document.getElementById('cfParticular').textContent = particular || '—';
 
@@ -1107,27 +1151,146 @@ function closeConfirm(){
   document.getElementById('confirmModal').classList.remove('active');
 }
 
+function showInsufficientBalance(info){
+  info = info || {};
+  var balance = Number(info.balance) || 0;
+  var requested = Number(info.requested) || 0;
+  var shortfall = requested - balance;
+
+  setText('ibAccount', info.name || '—');
+  setText('ibAccountNo', info.number || '—');
+  setText('ibAvailable', '₹ ' + balance.toLocaleString('en-IN'));
+  setText('ibRequested', '₹ ' + requested.toLocaleString('en-IN'));
+  setText('ibShortfall', '₹ ' + (shortfall > 0 ? shortfall : 0).toLocaleString('en-IN'));
+
+  document.getElementById('insufficientBalanceModal').classList.add('active');
+}
+
+function closeInsufficientBalance(){
+  document.getElementById('insufficientBalanceModal').classList.remove('active');
+}
+
 function confirmEntry(){
-  // TODO: send this entry to the Google Sheet (Apps Script Web App URL) once linked.
+  var accountSelect = document.getElementById('entryAccount');
+  var accountKey = accountSelect.value;
+  var accountLabel = accountSelect.options[accountSelect.selectedIndex] ? accountSelect.options[accountSelect.selectedIndex].text : accountKey;
+
   var entry = {
+    action: 'addEntry',
     date: document.getElementById('entryDate').value.trim(),
     type: document.querySelector('input[name="entryType"]:checked').value,
-    account: document.getElementById('entryAccount').value,
+    accountKey: accountKey,
     amount: document.getElementById('entryAmount').value,
     particular: document.getElementById('entryParticular').value.trim()
   };
 
   closeConfirm();
 
+  postToApi(entry).then(function(res){
+    if(res && res.success){
+      showToast('Entry saved / એન્ટ્રી સેવ થઈ');
+      // Reflect the new balance locally without a full refetch
+      var acc = ACCOUNTS.find(function(a){ return a.key === accountKey; });
+      var amt = Number(entry.amount) || 0;
+      if(acc){
+        acc.balance = (Number(acc.balance) || 0) + (entry.type === 'Credit' ? amt : -amt);
+        renderAccountSummary();
+      }
+
+      // Reflect this new entry in the Home summary cards immediately,
+      // without waiting for a full refetch.
+      if(entry.date === todayDDMMYYYY()){
+        HOME_STATS.totalEntriesToday += 1;
+        if(entry.type === 'Credit') HOME_STATS.totalCreditToday += amt;
+        else if(entry.type === 'Debit') HOME_STATS.totalDebitToday += amt;
+      }
+      HOME_STATS.totalBalance += (entry.type === 'Credit' ? amt : -amt);
+      renderHomeStatCards();
+
+      updateLastEntryCard({
+        date: entry.date,
+        type: entry.type,
+        particular: entry.particular,
+        amount: entry.amount,
+        accountLabel: accountLabel
+      });
+    } else {
+      alert('Could not save entry. / એન્ટ્રી સેવ થઈ શકી નથી.\n' + (res && res.error ? res.error : ''));
+    }
+  });
+
   // Reset form for next entry
   document.getElementById('entryAccount').value = '';
   document.getElementById('entryAmount').value = '';
   document.getElementById('entryParticular').value = '';
   document.getElementById('entryDate').value = todayDDMMYYYY();
+}
 
-  var toast = document.getElementById('toast');
-  toast.classList.add('show');
-  setTimeout(function(){ toast.classList.remove('show'); }, 2200);
+function updateLastEntryCard(entry){
+  setText('leDate', entry.date || '—');
+  setText('leType', entry.type || '—');
+  setText('leParticular', entry.particular || '—');
+  setText('leAmount', '₹ ' + (entry.amount || '—'));
+}
+
+function setText(id, text){
+  var el = document.getElementById(id);
+  if(el) el.textContent = text;
+}
+
+// Running totals for "today" shown on the Home cards, kept in sync
+// both on initial load and after each new entry is saved.
+var HOME_STATS = { totalCreditToday: 0, totalDebitToday: 0, totalEntriesToday: 0, totalBalance: 0 };
+
+function renderHomeStatCards(){
+  setText('statTotalCredit', '₹ ' + HOME_STATS.totalCreditToday.toLocaleString('en-IN'));
+  setText('statTotalDebit', '₹ ' + HOME_STATS.totalDebitToday.toLocaleString('en-IN'));
+  setText('statTotalEntry', String(HOME_STATS.totalEntriesToday));
+  setText('statTotalBalance', '₹ ' + HOME_STATS.totalBalance.toLocaleString('en-IN'));
+}
+
+// Computes today's Total Credit / Total Debit / Total Entry cards and
+// the overall Total Balance from the full entries + balances returned
+// by getData(), and updates the Last Entry panel with the most recent
+// row in the sheet.
+function computeAndRenderHomeStats(entries, balances){
+  var today = todayDDMMYYYY();
+  var totalCreditToday = 0, totalDebitToday = 0, totalEntriesToday = 0;
+  var lastEntry = null;
+
+  (entries || []).forEach(function(en){
+    if(en.particular === 'Closing Balance') return; // opening balance marker, not a real transaction
+    if(en.date === today){
+      totalEntriesToday++;
+      var amt = Number(en.amount) || 0;
+      if(en.type === 'CREDIT' || en.type === 'CR') totalCreditToday += amt;
+      else if(en.type === 'DEBIT' || en.type === 'DR') totalDebitToday += amt;
+    }
+    lastEntry = en; // sheet rows are in insertion order, so the last one is the most recent
+  });
+
+  var totalBalance = 0;
+  Object.keys(balances || {}).forEach(function(k){ totalBalance += Number(balances[k]) || 0; });
+
+  HOME_STATS.totalCreditToday = totalCreditToday;
+  HOME_STATS.totalDebitToday = totalDebitToday;
+  HOME_STATS.totalEntriesToday = totalEntriesToday;
+  HOME_STATS.totalBalance = totalBalance;
+  renderHomeStatCards();
+
+  if(lastEntry){
+    var acc = ACCOUNTS.find(function(a){ return a.key === lastEntry.accountKey; });
+    var accountLabel = acc ? (acc.number ? (acc.name + ' — ' + acc.number) : acc.name) : lastEntry.accountKey;
+    var typeLabel = (lastEntry.type === 'CREDIT' || lastEntry.type === 'CR') ? 'Credit'
+      : (lastEntry.type === 'DEBIT' || lastEntry.type === 'DR') ? 'Debit' : lastEntry.type;
+    updateLastEntryCard({
+      date: lastEntry.date,
+      type: typeLabel,
+      particular: lastEntry.particular,
+      amount: lastEntry.amount,
+      accountLabel: accountLabel
+    });
+  }
 }
 
 function showToast(msg){
@@ -1137,26 +1300,76 @@ function showToast(msg){
   setTimeout(function(){ toast.classList.remove('show'); }, 2200);
 }
 
-/* ---------- Accounts data (built from the Data Entry account list) ---------- */
+/* ================= API helpers ================= */
+function apiConfigured(){
+  return API_URL && API_URL.indexOf('PASTE_YOUR_WEB_APP_URL_HERE') === -1;
+}
+
+function postToApi(body){
+  if(!apiConfigured()){
+    alert('Google Sheet API URL is not configured yet. / Google Sheet API URL હજુ સેટ નથી.');
+    return Promise.resolve({ success:false, error:'API_URL not configured' });
+  }
+  return fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body)
+  }).then(function(r){ return r.json(); })
+    .catch(function(err){ return { success:false, error: String(err) }; });
+}
+
+function getFromApi(action){
+  if(!apiConfigured()) return Promise.resolve(null);
+  return fetch(API_URL + '?action=' + encodeURIComponent(action))
+    .then(function(r){ return r.json(); })
+    .catch(function(err){ return { error: String(err) }; });
+}
+
+/* ---------- Accounts data (loaded from the "Account" sheet tab) ---------- */
 var ACCOUNTS = [];
 
-function loadAccountsFromSelect(){
-  var select = document.getElementById('entryAccount');
-  var options = select.querySelectorAll('option');
-  ACCOUNTS = [];
-  options.forEach(function(opt){
-    if(!opt.value) return;
-    var raw = opt.value;
-    var parts = raw.split(' — ');
-    var name = parts[0];
-    var number = parts.length > 1 ? parts[1] : null;
-    ACCOUNTS.push({ name: name, number: number, balance: 0 });
+function fetchAccountsAndBalances(){
+  var list = document.getElementById('acctSummaryList');
+  if(list) list.innerHTML = '<div class="placeholder-card">Loading accounts… / ખાતાં લોડ થઈ રહ્યાં છે…</div>';
+
+  if(!apiConfigured()){
+    if(list) list.innerHTML = '<div class="placeholder-card">Google Sheet API URL not configured yet. / Google Sheet API URL હજુ સેટ નથી.</div>';
+    return;
+  }
+
+  getFromApi('getData').then(function(data){
+    if(!data || data.error){
+      if(list) list.innerHTML = '<div class="placeholder-card">Could not load accounts. / ખાતાં લોડ થઈ શક્યાં નથી.</div>';
+      return;
+    }
+    var balances = data.balances || {};
+    ACCOUNTS = (data.accounts || []).map(function(a){
+      return { name: a.name, number: a.number || null, key: a.key, balance: balances[a.key] || 0 };
+    });
+    renderEntryAccountSelect();
+    renderAccountSummary();
+    computeAndRenderHomeStats(data.entries || [], balances);
   });
+}
+
+function renderEntryAccountSelect(){
+  var select = document.getElementById('entryAccount');
+  if(!select) return;
+  var html = '<option value="">Select Account / ખાતું પસંદ કરો</option>';
+  ACCOUNTS.forEach(function(acc){
+    var label = acc.number ? (acc.name + ' — ' + acc.number) : acc.name;
+    html += '<option value="' + acc.key + '">' + label + '</option>';
+  });
+  select.innerHTML = html;
 }
 
 function renderAccountSummary(){
   var list = document.getElementById('acctSummaryList');
   if(!list) return;
+  if(!ACCOUNTS.length){
+    list.innerHTML = '<div class="placeholder-card">No accounts found. / કોઈ ખાતું મળ્યું નથી.</div>';
+    return;
+  }
   var html = '';
   ACCOUNTS.forEach(function(acc){
     html += '<div class="acct-row">' +
@@ -1170,14 +1383,7 @@ function renderAccountSummary(){
   list.innerHTML = html;
 }
 
-function addAccountOption(name, number){
-  var select = document.getElementById('entryAccount');
-  var value = number ? (name + ' — ' + number) : name;
-  var opt = document.createElement('option');
-  opt.value = value;
-  opt.textContent = value;
-  select.appendChild(opt);
-}
+
 
 /* ---------- Admin password gate ---------- */
 var ADMIN_PASSWORD = '94976';
@@ -1275,16 +1481,30 @@ function submitUpdateBalance(){
   if(isFutureDate(date)){ alert('Future date is not allowed. / ભવિષ્યની તારીખ માન્ય નથી.'); return; }
 
   var inputs = document.querySelectorAll('#updateBalanceList .ub-amt-input');
+  var updates = [];
   inputs.forEach(function(inp){
     if(inp.value !== ''){
       var idx = Number(inp.getAttribute('data-idx'));
-      ACCOUNTS[idx].balance = Number(inp.value);
+      updates.push({
+        idx: idx,
+        accountKey: ACCOUNTS[idx].key,
+        amount: Number(inp.value)
+      });
     }
   });
 
-  renderAccountSummary();
-  showAdminMenu();
-  showToast('Balances updated for ' + date + ' / બેલેન્સ અપડેટ થયું');
+  if(!updates.length){ alert('Please enter at least one balance. / કૃપા કરીને ઓછામાં ઓછું એક બેલેન્સ દાખલ કરો.'); return; }
+
+  postToApi({ action: 'updateBalance', date: date, updates: updates }).then(function(res){
+    if(res && res.success){
+      updates.forEach(function(u){ ACCOUNTS[u.idx].balance = u.amount; });
+      renderAccountSummary();
+      showAdminMenu();
+      showToast('Balances updated for ' + date + ' / બેલેન્સ અપડેટ થયું');
+    } else {
+      alert('Could not update balances. / બેલેન્સ અપડેટ થઈ શક્યું નથી.\n' + (res && res.error ? res.error : ''));
+    }
+  });
 }
 
 /* ---------- Add Account ---------- */
@@ -1295,20 +1515,26 @@ function submitAddAccount(){
 
   if(!name){ alert('Please enter an account name. / કૃપા કરીને ખાતાનું નામ દાખલ કરો.'); return; }
 
-  ACCOUNTS.push({ name: name, number: number || null, balance: balance ? Number(balance) : 0 });
-  addAccountOption(name, number);
-  renderAccountSummary();
+  postToApi({ action: 'addAccount', name: name, number: number, balance: balance || 0 }).then(function(res){
+    if(res && res.success){
+      var key = res.key || (number ? (name + '-' + number) : name);
+      ACCOUNTS.push({ name: name, number: number || null, key: key, balance: balance ? Number(balance) : 0 });
+      renderEntryAccountSelect();
+      renderAccountSummary();
 
-  document.getElementById('newAcctName').value = '';
-  document.getElementById('newAcctNumber').value = '';
-  document.getElementById('newAcctBalance').value = '';
+      document.getElementById('newAcctName').value = '';
+      document.getElementById('newAcctNumber').value = '';
+      document.getElementById('newAcctBalance').value = '';
 
-  showAdminMenu();
-  showToast('Account added / ખાતું ઉમેરાયું');
+      showAdminMenu();
+      showToast('Account added / ખાતું ઉમેરાયું');
+    } else {
+      alert('Could not add account. / ખાતું ઉમેરી શકાયું નથી.\n' + (res && res.error ? res.error : ''));
+    }
+  });
 }
 
-loadAccountsFromSelect();
-renderAccountSummary();
+fetchAccountsAndBalances();
 </script>
 </body>
 </html>
