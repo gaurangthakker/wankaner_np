@@ -707,6 +707,123 @@
   @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .rep-date{color:var(--cyan-300);}}
   .rep-info{flex:1;min-width:120px;}
 
+  /* ---------- Daily Report (A4 printable) ---------- */
+  .dr-overlay{
+    display:none;
+    position:fixed;inset:0;
+    background:#e7edf2;
+    z-index:70;
+    overflow-y:auto;
+    padding:16px 12px 50px;
+  }
+  .dr-overlay.active{display:block;}
+  .dr-toolbar{
+    max-width:210mm;
+    margin:0 auto 14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .dr-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .dr-download-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--navy-800);
+    color:#fff;
+    border:none;
+    border-radius:9px;
+    padding:9px 16px;
+    font-size:12.5px;
+    font-weight:600;
+    font-family:var(--font-head);
+    cursor:pointer;
+    text-transform:uppercase;
+  }
+  .dr-download-btn:hover{filter:brightness(1.12);}
+  .dr-download-btn.excel{background:var(--good);}
+  .dr-download-btn.print{background:var(--cyan-500);color:var(--navy-950);}
+  .dr-download-btn svg{width:16px;height:16px;flex-shrink:0;}
+
+  .a4-page{
+    width:210mm;
+    min-height:297mm;
+    max-width:100%;
+    margin:0 auto;
+    background:#ffffff;
+    color:#0d1b2a;
+    padding:14mm 12mm;
+    box-shadow:0 4px 24px rgba(0,0,0,0.2);
+    text-transform:none;
+  }
+  .a4-head{text-align:center;margin-bottom:8mm;}
+  .a4-head h1{
+    font-family:var(--font-head);
+    font-size:15.5px;
+    font-weight:700;
+    letter-spacing:0.3px;
+    color:#0b2447;
+    margin:0 0 5px;
+  }
+  .a4-head .gu{
+    font-size:13.5px;
+    font-weight:500;
+    color:#123a6b;
+    margin:0 0 8px;
+  }
+  .a4-head .dr-date-line{
+    font-size:12.5px;
+    font-weight:600;
+    color:#0d1b2a;
+    border-top:1px solid #0b2447;
+    border-bottom:1px solid #0b2447;
+    display:inline-block;
+    padding:4px 18px;
+    margin-top:2px;
+  }
+  .a4-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:11px;
+  }
+  .a4-table th,.a4-table td{
+    border:1px solid #0b2447;
+    padding:6px 8px;
+  }
+  .a4-table th{
+    background:#0b2447;
+    color:#fff;
+    font-family:var(--font-head);
+    font-size:10px;
+    text-align:center;
+  }
+  .a4-table td{text-align:right;}
+  .a4-table td:first-child{text-align:left;}
+  .a4-table tfoot td{
+    font-weight:700;
+    background:#e3fbff;
+  }
+  .a4-foot-note{
+    margin-top:8mm;
+    font-size:9.5px;
+    color:#5b6b7c;
+    text-align:right;
+  }
+
+  @media print{
+    body *{visibility:hidden;}
+    .a4-page, .a4-page *{visibility:visible;}
+    .a4-page{
+      position:absolute;top:0;left:0;
+      box-shadow:none;
+      margin:0;
+      width:210mm;
+      min-height:297mm;
+    }
+    .dr-toolbar{display:none;}
+    @page{size:A4;margin:0;}
+  }
+
   .toast{
     position:fixed;
     bottom:90px;left:50%;
@@ -986,7 +1103,11 @@
           <div class="actions">
             <div class="action-btn primary" onclick="openReportsSection()">
               <div class="ico">≡</div>
-              <div class="t">Show Reports / રિપોર્ટ બતાવો</div>
+              <div class="t">Show Entries / એન્ટ્રી બતાવો</div>
+            </div>
+            <div class="action-btn primary" onclick="openDailyReportDateModal()">
+              <div class="ico">🖨</div>
+              <div class="t">Generate Daily Report / દૈનિક રિપોર્ટ બનાવો</div>
             </div>
           </div>
         </div>
@@ -1225,7 +1346,72 @@
   </div>
 </div>
 
+<div id="dailyReportDateModal" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-title">Generate Daily Report / દૈનિક રિપોર્ટ બનાવો</div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Report Date / રિપોર્ટ તારીખ</label>
+        <div class="date-input-wrap">
+          <input type="text" id="drDate" class="form-input" placeholder="DD/MM/YYYY" readonly onclick="openDrDatePicker()">
+          <button type="button" class="date-picker-btn" onclick="openDrDatePicker()">📅</button>
+          <input type="date" id="drDatePicker" class="hidden-date-input" onchange="onDrDatePicked()">
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-edit" onclick="closeDailyReportDateModal()">Cancel / રદ કરો</button>
+      <button class="btn-confirm" onclick="generateDailyReport()">Submit / સબમિટ</button>
+    </div>
+  </div>
+</div>
+
+<div id="dailyReportOverlay" class="dr-overlay">
+  <div class="dr-toolbar">
+    <button type="button" class="admin-back-btn" onclick="closeDailyReportOverlay()">← Back / પાછા</button>
+    <div class="dr-actions">
+      <button type="button" class="dr-download-btn print" onclick="printDailyReport()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        Print
+      </button>
+      <button type="button" class="dr-download-btn" onclick="downloadDailyReportPDF()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        PDF
+      </button>
+      <button type="button" class="dr-download-btn excel" onclick="downloadDailyReportExcel()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+        Excel
+      </button>
+    </div>
+  </div>
+  <div class="a4-page" id="dailyReportPage">
+    <div class="a4-head">
+      <h1>ACCOUNT WISE DAILY REPORTS OF - WANKANER NAGARPALIKA</h1>
+      <div class="gu">વાંકાનેર નગરપાલિકાનો ખાતાવાર દૈનિક અહેવાલ</div>
+      <div class="dr-date-line">Date / તારીખ : <span id="drReportDateLabel">—</span></div>
+    </div>
+    <table class="a4-table">
+      <thead>
+        <tr>
+          <th>Account Details and Number / ખાતાની વિગત અને નંબર</th>
+          <th>Opening Balance (₹) / શરૂઆતનું બેલેન્સ</th>
+          <th>Credit (₹) / જમા</th>
+          <th>Debit (₹) / ઉધાર</th>
+          <th>Closing Balance (₹) / બંધ બેલેન્સ</th>
+        </tr>
+      </thead>
+      <tbody id="drReportBody"></tbody>
+      <tfoot id="drReportFoot"></tfoot>
+    </table>
+    <div class="a4-foot-note">Generated on <span id="drGeneratedOn"></span> — Shroff Book, Wankaner Nagarpalika</div>
+  </div>
+</div>
+
 <div id="toast" class="toast">Entry saved / એન્ટ્રી સેવ થઈ</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
 /* ================= CONFIG ================= */
@@ -2163,6 +2349,297 @@ function parseReportDMY(d){
     }
   }
   return 0;
+}
+
+/* ---------- Generate Daily Report (Account Wise Closing Balance) ---------- */
+var DR_CURRENT_DATE = '';
+var DR_CURRENT_ROWS = [];
+
+// Local date parser for the Daily Report — kept separate from other
+// date parsers in this file for the same reason as parseReportDMY above.
+function drParseDMY(ddmmyyyy){
+  if(typeof ddmmyyyy !== 'string') return null;
+  var parts = ddmmyyyy.split('/');
+  if(parts.length !== 3) return null;
+  var d = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function drPreviousDay(ddmmyyyy){
+  var d = drParseDMY(ddmmyyyy);
+  if(!d) return '';
+  d.setDate(d.getDate() - 1);
+  var dd = String(d.getDate()).padStart(2,'0');
+  var mm = String(d.getMonth()+1).padStart(2,'0');
+  var yyyy = d.getFullYear();
+  return dd + '/' + mm + '/' + yyyy;
+}
+
+function isCreditType(t){
+  if(!t) return false;
+  var u = String(t).toUpperCase();
+  return u === 'CREDIT' || u === 'CR';
+}
+
+// Every entry for one account, sorted oldest-first (by date, then by
+// sheet row as a tiebreaker for same-day entries) so balances can be
+// replayed forward in the order they actually happened.
+function drSortedEntriesForAccount(accountKey){
+  return ALL_ENTRIES.filter(function(en){ return en.accountKey === accountKey; })
+    .slice()
+    .sort(function(a, b){
+      var ta = drParseDMY(a.date), tb = drParseDMY(b.date);
+      ta = ta ? ta.getTime() : 0;
+      tb = tb ? tb.getTime() : 0;
+      if(ta !== tb) return ta - tb;
+      return a.row - b.row;
+    });
+}
+
+// Balance of one account at the end of cutoffDdmmyyyy, replaying every
+// entry up to and including that date. A "Closing Balance" marker row
+// (written by Admin > Update Balance) is an absolute override rather
+// than a Credit/Debit change — matching how that feature already
+// behaves elsewhere in this file.
+function drBalanceAsOf(accountKey, cutoffDdmmyyyy){
+  var cutoff = drParseDMY(cutoffDdmmyyyy);
+  if(!cutoff) return 0;
+  var entries = drSortedEntriesForAccount(accountKey);
+  var balance = 0;
+  for(var i = 0; i < entries.length; i++){
+    var en = entries[i];
+    var enDate = drParseDMY(en.date);
+    if(!enDate || enDate.getTime() > cutoff.getTime()) break;
+    var amt = Number(en.amount) || 0;
+    if(isBalanceMarkerParticular(en.particular)){
+      balance = amt;
+    } else if(isCreditType(en.type)){
+      balance += amt;
+    } else {
+      balance -= amt;
+    }
+  }
+  return balance;
+}
+
+// Total Credit / Total Debit for one account on exactly one date,
+// excluding balance-marker rows (same exclusion Home stats already use).
+function drDayTotals(accountKey, ddmmyyyy){
+  var credit = 0, debit = 0;
+  ALL_ENTRIES.forEach(function(en){
+    if(en.accountKey !== accountKey) return;
+    if(en.date !== ddmmyyyy) return;
+    if(isBalanceMarkerParticular(en.particular)) return;
+    var amt = Number(en.amount) || 0;
+    if(isCreditType(en.type)) credit += amt; else debit += amt;
+  });
+  return { credit: credit, debit: debit };
+}
+
+function buildDailyReportRows(reportDate){
+  var prevDate = drPreviousDay(reportDate);
+  return ACCOUNTS.map(function(acc){
+    var opening = drBalanceAsOf(acc.key, prevDate);
+    var totals = drDayTotals(acc.key, reportDate);
+    var closing = opening + totals.credit - totals.debit;
+    return {
+      label: acc.number ? (acc.name + ' — ' + acc.number) : acc.name,
+      opening: opening,
+      credit: totals.credit,
+      debit: totals.debit,
+      closing: closing
+    };
+  });
+}
+
+function openDailyReportDateModal(){
+  document.getElementById('drDate').value = todayDDMMYYYY();
+  document.getElementById('drDatePicker').value = '';
+  document.getElementById('drDatePicker').max = todayYYYYMMDD();
+  document.getElementById('dailyReportDateModal').classList.add('active');
+}
+
+function closeDailyReportDateModal(){
+  document.getElementById('dailyReportDateModal').classList.remove('active');
+}
+
+function openDrDatePicker(){
+  var picker = document.getElementById('drDatePicker');
+  picker.max = todayYYYYMMDD();
+  if(typeof picker.showPicker === 'function'){
+    picker.showPicker();
+  } else {
+    picker.focus();
+    picker.click();
+  }
+}
+
+function onDrDatePicked(){
+  var picker = document.getElementById('drDatePicker');
+  if(!picker.value) return;
+  document.getElementById('drDate').value = yyyymmddToDDMMYYYY(picker.value);
+}
+
+function fmtAmt(n){
+  return Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits:2, maximumFractionDigits:2 });
+}
+
+function generateDailyReport(){
+  var date = document.getElementById('drDate').value.trim();
+  if(!isValidDDMMYYYY(date)){
+    alert('Please enter date in DD/MM/YYYY format. / કૃપા કરીને યોગ્ય તારીખ દાખલ કરો.');
+    return;
+  }
+  if(isFutureDate(date)){
+    alert('Future date is not allowed. / ભવિષ્યની તારીખ માન્ય નથી.');
+    return;
+  }
+  if(!ACCOUNTS.length){
+    alert('No accounts found. / કોઈ ખાતું મળ્યું નથી.');
+    return;
+  }
+
+  DR_CURRENT_DATE = date;
+  DR_CURRENT_ROWS = buildDailyReportRows(date);
+
+  renderDailyReportTable();
+  closeDailyReportDateModal();
+  var overlay = document.getElementById('dailyReportOverlay');
+  overlay.classList.add('active');
+  overlay.scrollTop = 0;
+}
+
+function renderDailyReportTable(){
+  document.getElementById('drReportDateLabel').textContent = DR_CURRENT_DATE;
+  document.getElementById('drGeneratedOn').textContent = todayDDMMYYYY();
+
+  var totOpen = 0, totCredit = 0, totDebit = 0, totClose = 0;
+  var html = '';
+  DR_CURRENT_ROWS.forEach(function(row){
+    totOpen += row.opening; totCredit += row.credit; totDebit += row.debit; totClose += row.closing;
+    html += '<tr>' +
+      '<td>' + row.label + '</td>' +
+      '<td>' + fmtAmt(row.opening) + '</td>' +
+      '<td>' + fmtAmt(row.credit) + '</td>' +
+      '<td>' + fmtAmt(row.debit) + '</td>' +
+      '<td>' + fmtAmt(row.closing) + '</td>' +
+    '</tr>';
+  });
+  document.getElementById('drReportBody').innerHTML = html || '<tr><td colspan="5" style="text-align:center;">No accounts found. / કોઈ ખાતું મળ્યું નથી.</td></tr>';
+
+  document.getElementById('drReportFoot').innerHTML =
+    '<tr>' +
+      '<td>TOTAL / કુલ</td>' +
+      '<td>' + fmtAmt(totOpen) + '</td>' +
+      '<td>' + fmtAmt(totCredit) + '</td>' +
+      '<td>' + fmtAmt(totDebit) + '</td>' +
+      '<td>' + fmtAmt(totClose) + '</td>' +
+    '</tr>';
+}
+
+function closeDailyReportOverlay(){
+  document.getElementById('dailyReportOverlay').classList.remove('active');
+}
+
+function printDailyReport(){
+  window.print();
+}
+
+// Slashes aren't valid in file names on most systems, so the saved
+// file uses dashes while the report itself keeps showing DD/MM/YYYY.
+function drFileNameBase(){
+  return 'Closing Balance Account Wise ' + DR_CURRENT_DATE.replace(/\//g, '-');
+}
+
+// The PDF is built from a screenshot of the already-rendered A4 page
+// (via html2canvas) rather than drawn with jsPDF's own text/fonts.
+// jsPDF's built-in fonts only cover Latin (WinAnsi) characters, so
+// Gujarati text drawn directly with doc.text() comes out garbled;
+// capturing the real, correctly-shaped on-screen text as an image and
+// placing that image into the PDF keeps the Gujarati exactly as shown.
+function downloadDailyReportPDF(){
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    alert('PDF library did not load. Please check your internet connection and try again. / PDF લાઈબ્રેરી લોડ થઈ નથી.');
+    return;
+  }
+  if(typeof html2canvas === 'undefined'){
+    alert('PDF library did not load. Please check your internet connection and try again. / PDF લાઈબ્રેરી લોડ થઈ નથી.');
+    return;
+  }
+
+  var pageEl = document.getElementById('dailyReportPage');
+  var prevShadow = pageEl.style.boxShadow;
+  pageEl.style.boxShadow = 'none';
+  showToast('Generating PDF… / PDF બની રહ્યું છે…');
+
+  html2canvas(pageEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(function(canvas){
+    pageEl.style.boxShadow = prevShadow;
+
+    var jsPDFCtor = window.jspdf.jsPDF;
+    var doc = new jsPDFCtor({ unit: 'mm', format: 'a4' });
+    var pageW = 210, pageH = 297;
+    var imgData = canvas.toDataURL('image/png');
+
+    // Always a single A4 page: keep the image at full page width, and
+    // only compress the height when the content is taller than one
+    // page — width is never shrunk or centered.
+    var imgW = pageW;
+    var naturalH = canvas.height * imgW / canvas.width;
+    var imgH = Math.min(naturalH, pageH);
+    var offsetX = 0;
+    var offsetY = 0;
+
+    doc.addImage(imgData, 'PNG', offsetX, offsetY, imgW, imgH);
+    doc.save(drFileNameBase() + '.pdf');
+  }).catch(function(){
+    pageEl.style.boxShadow = prevShadow;
+    alert('Could not generate PDF. Please try again. / PDF બનાવી શકાયું નથી.');
+  });
+}
+
+function downloadDailyReportExcel(){
+  if(typeof XLSX === 'undefined'){
+    alert('Excel library did not load. Please check your internet connection and try again. / Excel લાઈબ્રેરી લોડ થઈ નથી.');
+    return;
+  }
+
+  var aoa = [];
+  aoa.push(['ACCOUNT WISE DAILY REPORTS OF - WANKANER NAGARPALIKA']);
+  aoa.push(['વાંકાનેર નગરપાલિકાનો ખાતાવાર દૈનિક અહેવાલ']);
+  aoa.push(['Date: ' + DR_CURRENT_DATE]);
+  aoa.push([]);
+  aoa.push(['Account Details and Number', 'Opening Balance (Rs.)', 'Credit (Rs.)', 'Debit (Rs.)', 'Closing Balance (Rs.)']);
+
+  var totOpen=0, totCredit=0, totDebit=0, totClose=0;
+  DR_CURRENT_ROWS.forEach(function(row){
+    totOpen += row.opening; totCredit += row.credit; totDebit += row.debit; totClose += row.closing;
+    aoa.push([
+      row.label,
+      Number(row.opening.toFixed(2)),
+      Number(row.credit.toFixed(2)),
+      Number(row.debit.toFixed(2)),
+      Number(row.closing.toFixed(2))
+    ]);
+  });
+  aoa.push([
+    'TOTAL',
+    Number(totOpen.toFixed(2)),
+    Number(totCredit.toFixed(2)),
+    Number(totDebit.toFixed(2)),
+    Number(totClose.toFixed(2))
+  ]);
+
+  var ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols'] = [{ wch:34 }, { wch:18 }, { wch:14 }, { wch:14 }, { wch:18 }];
+  ws['!merges'] = [
+    { s:{ r:0, c:0 }, e:{ r:0, c:4 } },
+    { s:{ r:1, c:0 }, e:{ r:1, c:4 } },
+    { s:{ r:2, c:0 }, e:{ r:2, c:4 } }
+  ];
+
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Daily Report');
+  XLSX.writeFile(wb, drFileNameBase() + '.xlsx');
 }
 
 fetchAccountsAndBalances();
