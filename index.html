@@ -631,6 +631,82 @@
     flex-shrink:0;
   }
 
+  /* Edit Entry — search filters + result rows */
+  .ee-filters{
+    display:flex;
+    gap:10px;
+    margin:14px 0;
+    flex-wrap:wrap;
+  }
+  .ee-filters select{
+    flex:1;
+    min-width:150px;
+  }
+  .ee-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  .ee-row:last-child{border-bottom:none;}
+  .ee-info{flex:1;min-width:0;}
+  .ee-type-badge{
+    font-size:10.5px;
+    font-weight:600;
+    padding:3px 8px;
+    border-radius:6px;
+    flex-shrink:0;
+    white-space:nowrap;
+  }
+  .ee-type-badge.credit{background:rgba(30,158,107,0.12);color:var(--good);}
+  .ee-type-badge.debit{background:rgba(217,83,79,0.12);color:#d9534f;}
+  .ee-edit-btn{
+    background:var(--cyan-100);
+    color:var(--navy-800);
+    border:none;
+    border-radius:8px;
+    width:34px;height:34px;
+    flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;
+    cursor:pointer;
+  }
+  .ee-edit-btn:hover{background:var(--cyan-300);}
+  .ee-delete-btn{
+    background:rgba(217,83,79,0.12);
+    color:#d9534f;
+    border:none;
+    border-radius:8px;
+    width:34px;height:34px;
+    flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;
+    cursor:pointer;
+  }
+  .ee-delete-btn:hover{background:#d9534f;color:#fff;}
+
+  /* Reports list rows */
+  .rep-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 14px;
+    border-bottom:1px solid var(--line);
+    flex-wrap:wrap;
+  }
+  .rep-row:last-child{border-bottom:none;}
+  .rep-date{
+    font-family:var(--font-head);font-weight:600;font-size:12px;
+    color:var(--navy-800);
+    background:var(--cyan-100);
+    padding:3px 8px;border-radius:6px;flex-shrink:0;
+    white-space:nowrap;
+  }
+  :root[data-theme="dark"] .rep-date{color:var(--cyan-300);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .rep-date{color:var(--cyan-300);}}
+  .rep-info{flex:1;min-width:120px;}
+
   .toast{
     position:fixed;
     bottom:90px;left:50%;
@@ -700,6 +776,13 @@
   }
   :root[data-theme="dark"] .acct-balance{color:var(--cyan-300);}
   @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .acct-balance{color:var(--cyan-300);}}
+  .acct-row-total{
+    background:var(--cyan-100);
+  }
+  .acct-row-total .acct-name{font-size:14px;}
+  .acct-row-total .acct-balance{font-size:16px;}
+  :root[data-theme="dark"] .acct-row-total{background:rgba(103,232,249,0.08);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .acct-row-total{background:rgba(103,232,249,0.08);}}
 
   /* Register table / list */
   .register{
@@ -898,7 +981,45 @@
 
       <div id="view-reports" class="view">
         <div class="section-label">Reports / રીપોર્ટસ</div>
-        <div class="placeholder-card">Reports will be added here. / રીપોર્ટસ પછીથી ઉમેરાશે.</div>
+
+        <div id="reportsMenu" class="admin-sub">
+          <div class="actions">
+            <div class="action-btn primary" onclick="openReportsSection()">
+              <div class="ico">≡</div>
+              <div class="t">Show Reports / રિપોર્ટ બતાવો</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="reportsView" class="admin-sub" style="display:none;">
+          <div class="admin-panel-head">
+            <span>All Entries / બધી એન્ટ્રીઓ</span>
+            <button type="button" class="admin-back-btn" onclick="closeReportsSection()">← Back / પાછા</button>
+          </div>
+
+          <div id="repFilters" class="ee-filters" style="display:none;">
+            <div class="date-input-wrap" style="flex:1;min-width:150px;">
+              <input type="text" id="repFilterDate" class="form-input" placeholder="DD/MM/YYYY"
+                     oninput="renderReportsList()"
+                     onkeydown="if(event.key==='Enter'){renderReportsList();}">
+              <button type="button" class="date-picker-btn" onclick="openRepDatePicker()">📅</button>
+              <input type="date" id="repFilterDatePicker" class="hidden-date-input" onchange="onRepDatePicked()">
+            </div>
+            <select id="repFilterAccount" class="form-input" onchange="renderReportsList()">
+              <option value="">All Accounts / બધા ખાતાં</option>
+            </select>
+            <select id="repFilterType" class="form-input" onchange="renderReportsList()">
+              <option value="">All / બધા</option>
+              <option value="CREDIT">Credit / જમા</option>
+              <option value="DEBIT">Debit / ઉધાર</option>
+            </select>
+            <input type="number" id="repFilterAmount" class="form-input" placeholder="Amount / રકમ" min="0" step="0.01"
+                   oninput="renderReportsList()" style="flex:1;min-width:120px;">
+            <button type="button" class="admin-back-btn" onclick="clearReportsFilters()" style="flex-shrink:0;">Clear / સાફ કરો</button>
+          </div>
+
+          <div id="reportsList" class="register" style="margin-top:14px;"></div>
+        </div>
       </div>
 
       <div id="view-admin" class="view">
@@ -913,6 +1034,10 @@
             <div class="action-btn primary" onclick="showAdminSection('addAccount')">
               <div class="ico">+</div>
               <div class="t">Add Account / ખાતું ઉમેરો</div>
+            </div>
+            <div class="action-btn primary" onclick="showAdminSection('editEntry')">
+              <div class="ico">✎</div>
+              <div class="t">Edit Entry / એન્ટ્રી બદલો</div>
             </div>
           </div>
         </div>
@@ -956,6 +1081,39 @@
             </div>
             <button class="save-btn" onclick="submitAddAccount()">Add Account / ખાતું ઉમેરો</button>
           </div>
+        </div>
+
+        <div id="adminEditEntry" class="admin-sub" style="display:none;">
+          <div class="admin-panel-head">
+            <span>Edit Entry / એન્ટ્રી બદલો</span>
+            <button type="button" class="admin-back-btn" onclick="showAdminMenu()">← Back / પાછા</button>
+          </div>
+          <div class="entry-form" style="max-width:none;">
+            <div class="form-group">
+              <label>Search by Date / તારીખ પ્રમાણે શોધો</label>
+              <div class="date-input-wrap">
+                <input type="text" id="eeSearchDate" class="form-input" placeholder="DD/MM/YYYY"
+                       oninput="onEeSearchDateInput()"
+                       onkeydown="if(event.key==='Enter'){onEeSearchDateEnter();}"
+                       onblur="onEeSearchDateBlur()">
+                <button type="button" class="date-picker-btn" onclick="openEeDatePicker()">📅</button>
+                <input type="date" id="eeSearchDatePicker" class="hidden-date-input" onchange="onEeDatePicked()">
+              </div>
+            </div>
+          </div>
+
+          <div id="eeFilters" class="ee-filters" style="display:none;">
+            <select id="eeFilterAccount" class="form-input" onchange="renderEditEntryList()">
+              <option value="">All Accounts / બધા ખાતાં</option>
+            </select>
+            <select id="eeFilterType" class="form-input" onchange="renderEditEntryList()">
+              <option value="">All / બધા</option>
+              <option value="CREDIT">Credit / જમા</option>
+              <option value="DEBIT">Debit / ઉધાર</option>
+            </select>
+          </div>
+
+          <div id="eeResultsList" class="register" style="margin-top:14px;"></div>
         </div>
       </div>
 
@@ -1023,6 +1181,46 @@
     <div class="modal-actions">
       <button class="btn-edit" onclick="closeAdminPasswordModal()">Cancel / રદ કરો</button>
       <button class="btn-confirm admin-password-submit" onclick="submitAdminPassword()">Enter / દાખલ કરો</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Entry Modal -->
+<div id="editEntryModal" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-title">Edit Entry / એન્ટ્રી બદલો</div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Date / તારીખ</label>
+        <div class="date-input-wrap">
+          <input type="text" id="eeEditDate" class="form-input" placeholder="DD/MM/YYYY" readonly onclick="openEeEditDatePicker()">
+          <button type="button" class="date-picker-btn" onclick="openEeEditDatePicker()">📅</button>
+          <input type="date" id="eeEditDatePicker" class="hidden-date-input" onchange="onEeEditDatePicked()">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Entry Type / એન્ટ્રીનો પ્રકાર</label>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="eeEditType" value="Credit"> Credit / જમા</label>
+          <label class="radio-option"><input type="radio" name="eeEditType" value="Debit"> Debit / ઉધાર</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Account / ખાતું</label>
+        <select id="eeEditAccount" class="form-input"></select>
+      </div>
+      <div class="form-group">
+        <label>Amount (₹) / રકમ (₹)</label>
+        <input type="number" id="eeEditAmount" class="form-input" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Particular / વિગત</label>
+        <textarea id="eeEditParticular" class="form-input" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-edit" onclick="closeEditEntryModal()">Cancel / રદ કરો</button>
+      <button class="btn-confirm" onclick="submitEditEntry()">Save Changes / સેવ કરો</button>
     </div>
   </div>
 </div>
@@ -1259,7 +1457,7 @@ function computeAndRenderHomeStats(entries, balances){
   var lastEntry = null;
 
   (entries || []).forEach(function(en){
-    if(en.particular === 'Closing Balance') return; // opening balance marker, not a real transaction
+    if(isBalanceMarkerParticular(en.particular)) return; // opening balance marker, not a real transaction
     if(en.date === today){
       totalEntriesToday++;
       var amt = Number(en.amount) || 0;
@@ -1327,6 +1525,21 @@ function getFromApi(action){
 
 /* ---------- Accounts data (loaded from the "Account" sheet tab) ---------- */
 var ACCOUNTS = [];
+// Flat list of every Data-tab row (with its sheet row number) — used by
+// the Admin > Edit Entry search/filter/edit flow below.
+var ALL_ENTRIES = [];
+var EE_CURRENT_DATE = '';
+
+// "Closing Balance" (written by Admin > Update Balance) is the one
+// PARTICULAR that marks a Data-tab row as a balance baseline rather than
+// a real Credit/Debit transaction, so it's excluded from today's stats
+// and from Edit Entry. A new-account row (PARTICULAR "NEW ACCOUNT / નવું
+// ખાતું") is a normal Credit entry and is NOT excluded — it counts
+// toward Total Credit / Total Entry / Last Entry like any other entry.
+var BALANCE_MARKER_PARTICULARS = ['Closing Balance', 'CLOSING BALANCE / ક્લોસીંગ બેલેન્સ'];
+function isBalanceMarkerParticular(p){
+  return BALANCE_MARKER_PARTICULARS.indexOf(p) !== -1;
+}
 
 function fetchAccountsAndBalances(){
   var list = document.getElementById('acctSummaryList');
@@ -1346,9 +1559,15 @@ function fetchAccountsAndBalances(){
     ACCOUNTS = (data.accounts || []).map(function(a){
       return { name: a.name, number: a.number || null, key: a.key, balance: balances[a.key] || 0 };
     });
+    ALL_ENTRIES = data.entries || [];
     renderEntryAccountSelect();
     renderAccountSummary();
     computeAndRenderHomeStats(data.entries || [], balances);
+    // Keep an open Edit Entry search in sync after any refetch (e.g. right
+    // after saving an edit).
+    if(EE_CURRENT_DATE) renderEditEntryList();
+    // Keep an open Reports view in sync too.
+    if(document.getElementById('reportsView').style.display !== 'none') renderReportsList();
   });
 }
 
@@ -1371,7 +1590,9 @@ function renderAccountSummary(){
     return;
   }
   var html = '';
+  var totalBalance = 0;
   ACCOUNTS.forEach(function(acc){
+    totalBalance += Number(acc.balance || 0);
     html += '<div class="acct-row">' +
       '<div class="acct-info">' +
         '<div class="acct-name">' + acc.name + '</div>' +
@@ -1380,6 +1601,12 @@ function renderAccountSummary(){
       '<div class="acct-balance">₹ ' + Number(acc.balance || 0).toLocaleString('en-IN') + '</div>' +
     '</div>';
   });
+  html += '<div class="acct-row acct-row-total">' +
+    '<div class="acct-info">' +
+      '<div class="acct-name">Total Balance / કુલ બેલેન્સ</div>' +
+    '</div>' +
+    '<div class="acct-balance">₹ ' + Number(totalBalance).toLocaleString('en-IN') + '</div>' +
+  '</div>';
   list.innerHTML = html;
 }
 
@@ -1387,8 +1614,34 @@ function renderAccountSummary(){
 
 /* ---------- Admin password gate ---------- */
 var ADMIN_PASSWORD = '94976';
+var pendingPasswordCallback = null;
 
 function requestAdminAccess(){
+  pendingPasswordCallback = function(){
+    showAdminMenu();
+    showView('admin');
+  };
+  openAdminPasswordModal();
+}
+
+// Used to gate a single entry's edit behind the same password popup,
+// without routing the user into the full Admin Panel.
+function requestEditEntryPasswordAccess(rowIndex){
+  pendingPasswordCallback = function(){
+    openEditEntryModal(rowIndex);
+  };
+  openAdminPasswordModal();
+}
+
+// Same password gate as Edit, but for deleting one entry outright.
+function requestDeleteEntryPasswordAccess(rowIndex){
+  pendingPasswordCallback = function(){
+    confirmAndDeleteEntry(rowIndex);
+  };
+  openAdminPasswordModal();
+}
+
+function openAdminPasswordModal(){
   document.getElementById('adminPasswordInput').value = '';
   document.getElementById('adminPasswordError').style.display = 'none';
   document.getElementById('adminPasswordModal').classList.add('active');
@@ -1399,14 +1652,16 @@ function requestAdminAccess(){
 
 function closeAdminPasswordModal(){
   document.getElementById('adminPasswordModal').classList.remove('active');
+  pendingPasswordCallback = null;
 }
 
 function submitAdminPassword(){
   var entered = document.getElementById('adminPasswordInput').value;
   if(entered === ADMIN_PASSWORD){
-    closeAdminPasswordModal();
-    showAdminMenu();
-    showView('admin');
+    document.getElementById('adminPasswordModal').classList.remove('active');
+    var cb = pendingPasswordCallback;
+    pendingPasswordCallback = null;
+    if(cb) cb();
   } else {
     document.getElementById('adminPasswordError').style.display = 'block';
     document.getElementById('adminPasswordInput').value = '';
@@ -1423,16 +1678,21 @@ function showAdminMenu(){
   document.getElementById('adminMenu').style.display = '';
   document.getElementById('adminUpdateBalance').style.display = 'none';
   document.getElementById('adminAddAccount').style.display = 'none';
+  document.getElementById('adminEditEntry').style.display = 'none';
 }
 
 function showAdminSection(name){
   document.getElementById('adminMenu').style.display = 'none';
   document.getElementById('adminUpdateBalance').style.display = (name === 'updateBalance') ? '' : 'none';
   document.getElementById('adminAddAccount').style.display = (name === 'addAccount') ? '' : 'none';
+  document.getElementById('adminEditEntry').style.display = (name === 'editEntry') ? '' : 'none';
   if(name === 'updateBalance'){
     renderUpdateBalanceList();
     document.getElementById('ubDate').value = todayDDMMYYYY();
     document.getElementById('ubDatePicker').max = todayYYYYMMDD();
+  }
+  if(name === 'editEntry'){
+    resetEditEntrySearch();
   }
 }
 
@@ -1495,6 +1755,15 @@ function submitUpdateBalance(){
 
   if(!updates.length){ alert('Please enter at least one balance. / કૃપા કરીને ઓછામાં ઓછું એક બેલેન્સ દાખલ કરો.'); return; }
 
+  // Gate the actual write behind the same admin password popup used for
+  // Edit / Delete Entry, so closing balances can't be posted by mistake.
+  pendingPasswordCallback = function(){
+    doSubmitUpdateBalance(date, updates);
+  };
+  openAdminPasswordModal();
+}
+
+function doSubmitUpdateBalance(date, updates){
   postToApi({ action: 'updateBalance', date: date, updates: updates }).then(function(res){
     if(res && res.success){
       updates.forEach(function(u){ ACCOUNTS[u.idx].balance = u.amount; });
@@ -1517,21 +1786,383 @@ function submitAddAccount(){
 
   postToApi({ action: 'addAccount', name: name, number: number, balance: balance || 0 }).then(function(res){
     if(res && res.success){
-      var key = res.key || (number ? (name + '-' + number) : name);
-      ACCOUNTS.push({ name: name, number: number || null, key: key, balance: balance ? Number(balance) : 0 });
-      renderEntryAccountSelect();
-      renderAccountSummary();
-
       document.getElementById('newAcctName').value = '';
       document.getElementById('newAcctNumber').value = '';
       document.getElementById('newAcctBalance').value = '';
 
       showAdminMenu();
       showToast('Account added / ખાતું ઉમેરાયું');
+
+      // Refetch everything: the new account's opening entry is a normal
+      // Credit row on the Data tab now, so Total Credit, Total Entry and
+      // Last Entry on the Home tab all need to pick it up too.
+      fetchAccountsAndBalances();
     } else {
       alert('Could not add account. / ખાતું ઉમેરી શકાયું નથી.\n' + (res && res.error ? res.error : ''));
     }
   });
+}
+
+/* ---------- Edit Entry (Admin) ---------- */
+function resetEditEntrySearch(){
+  document.getElementById('eeSearchDate').value = '';
+  document.getElementById('eeFilters').style.display = 'none';
+  document.getElementById('eeResultsList').innerHTML = '';
+  EE_CURRENT_DATE = '';
+}
+
+function openEeDatePicker(){
+  var picker = document.getElementById('eeSearchDatePicker');
+  if(typeof picker.showPicker === 'function'){
+    picker.showPicker();
+  } else {
+    picker.focus();
+    picker.click();
+  }
+}
+
+function onEeDatePicked(){
+  var picker = document.getElementById('eeSearchDatePicker');
+  if(!picker.value) return;
+  var ddmmyyyy = yyyymmddToDDMMYYYY(picker.value);
+  document.getElementById('eeSearchDate').value = ddmmyyyy;
+  searchEditEntriesByDate(ddmmyyyy);
+}
+
+function isValidDDMMYYYY(v){
+  return /^\d{2}\/\d{2}\/\d{4}$/.test(v);
+}
+
+function onEeSearchDateInput(){
+  var val = document.getElementById('eeSearchDate').value.trim();
+  if(isValidDDMMYYYY(val)) searchEditEntriesByDate(val);
+}
+
+function onEeSearchDateEnter(){
+  var val = document.getElementById('eeSearchDate').value.trim();
+  if(isValidDDMMYYYY(val)){
+    searchEditEntriesByDate(val);
+  } else if(val){
+    alert('Please enter the date as DD/MM/YYYY. / કૃપા કરીને તારીખ DD/MM/YYYY ફોર્મેટમાં દાખલ કરો.');
+  }
+}
+
+function onEeSearchDateBlur(){
+  var val = document.getElementById('eeSearchDate').value.trim();
+  if(isValidDDMMYYYY(val)) searchEditEntriesByDate(val);
+}
+
+function searchEditEntriesByDate(dateStr){
+  EE_CURRENT_DATE = dateStr;
+  var matches = ALL_ENTRIES.filter(function(en){
+    return en.date === dateStr && !isBalanceMarkerParticular(en.particular);
+  });
+
+  populateEeAccountFilter(matches);
+  document.getElementById('eeFilterType').value = '';
+  document.getElementById('eeFilters').style.display = matches.length ? 'flex' : 'none';
+  renderEditEntryList();
+}
+
+function populateEeAccountFilter(matches){
+  var select = document.getElementById('eeFilterAccount');
+  var seen = {};
+  var html = '<option value="">All Accounts / બધા ખાતાં</option>';
+  matches.forEach(function(en){
+    if(seen[en.accountKey]) return;
+    seen[en.accountKey] = true;
+    var acc = ACCOUNTS.find(function(a){ return a.key === en.accountKey; });
+    var label = acc ? (acc.number ? (acc.name + ' — ' + acc.number) : acc.name) : en.accountKey;
+    html += '<option value="' + en.accountKey + '">' + label + '</option>';
+  });
+  select.innerHTML = html;
+}
+
+function renderEditEntryList(){
+  var list = document.getElementById('eeResultsList');
+  if(!EE_CURRENT_DATE){ list.innerHTML = ''; return; }
+
+  var accFilter = document.getElementById('eeFilterAccount').value;
+  var typeFilter = document.getElementById('eeFilterType').value;
+
+  var matches = ALL_ENTRIES.filter(function(en){
+    if(en.date !== EE_CURRENT_DATE) return false;
+    if(isBalanceMarkerParticular(en.particular)) return false;
+    if(accFilter && en.accountKey !== accFilter) return false;
+    if(typeFilter){
+      var t = (en.type === 'CR') ? 'CREDIT' : (en.type === 'DR') ? 'DEBIT' : en.type;
+      if(t !== typeFilter) return false;
+    }
+    return true;
+  });
+
+  if(!matches.length){
+    list.innerHTML = '<div class="placeholder-card">No entries found. / કોઈ એન્ટ્રી મળી નથી.</div>';
+    return;
+  }
+
+  var html = '';
+  matches.forEach(function(en){
+    var acc = ACCOUNTS.find(function(a){ return a.key === en.accountKey; });
+    var label = acc ? (acc.number ? (acc.name + ' — ' + acc.number) : acc.name) : en.accountKey;
+    var isCredit = (en.type === 'CREDIT' || en.type === 'CR');
+    var typeLabel = isCredit ? 'Credit / જમા' : 'Debit / ઉધાર';
+    html += '<div class="ee-row">' +
+      '<div class="ee-info">' +
+        '<div class="acct-name">' + label + '</div>' +
+        '<div class="acct-no">' + (en.particular || '—') + '</div>' +
+      '</div>' +
+      '<span class="ee-type-badge ' + (isCredit ? 'credit' : 'debit') + '">' + typeLabel + '</span>' +
+      '<div class="acct-balance">₹ ' + Number(en.amount || 0).toLocaleString('en-IN') + '</div>' +
+      '<button type="button" class="ee-edit-btn" title="Edit / બદલો" onclick="requestEditEntryPasswordAccess(' + en.row + ')">✎</button>' +
+      '<button type="button" class="ee-delete-btn" title="Delete / કાઢી નાખો" onclick="requestDeleteEntryPasswordAccess(' + en.row + ')">🗑</button>' +
+    '</div>';
+  });
+  list.innerHTML = html;
+}
+
+/* ---------- Edit Entry modal (opens only after the password check) ---------- */
+var EE_EDITING_ROW = null;
+
+function openEditEntryModal(rowIndex){
+  var entry = ALL_ENTRIES.find(function(en){ return en.row === rowIndex; });
+  if(!entry){
+    alert('Entry not found. / એન્ટ્રી મળી નથી.');
+    return;
+  }
+
+  EE_EDITING_ROW = rowIndex;
+
+  document.getElementById('eeEditDate').value = entry.date;
+  document.getElementById('eeEditDatePicker').value = '';
+
+  var isCredit = (entry.type === 'CREDIT' || entry.type === 'CR');
+  var typeRadio = document.querySelector('input[name="eeEditType"][value="' + (isCredit ? 'Credit' : 'Debit') + '"]');
+  if(typeRadio) typeRadio.checked = true;
+
+  renderEeEditAccountSelect(entry.accountKey);
+  document.getElementById('eeEditAmount').value = entry.amount;
+  document.getElementById('eeEditParticular').value = entry.particular;
+
+  document.getElementById('editEntryModal').classList.add('active');
+}
+
+function renderEeEditAccountSelect(selectedKey){
+  var select = document.getElementById('eeEditAccount');
+  var html = '';
+  ACCOUNTS.forEach(function(acc){
+    var label = acc.number ? (acc.name + ' — ' + acc.number) : acc.name;
+    html += '<option value="' + acc.key + '"' + (acc.key === selectedKey ? ' selected' : '') + '>' + label + '</option>';
+  });
+  select.innerHTML = html;
+}
+
+function closeEditEntryModal(){
+  document.getElementById('editEntryModal').classList.remove('active');
+  EE_EDITING_ROW = null;
+}
+
+function openEeEditDatePicker(){
+  var picker = document.getElementById('eeEditDatePicker');
+  picker.max = todayYYYYMMDD();
+  if(typeof picker.showPicker === 'function'){
+    picker.showPicker();
+  } else {
+    picker.focus();
+    picker.click();
+  }
+}
+
+function onEeEditDatePicked(){
+  var picker = document.getElementById('eeEditDatePicker');
+  if(!picker.value) return;
+  document.getElementById('eeEditDate').value = yyyymmddToDDMMYYYY(picker.value);
+}
+
+function submitEditEntry(){
+  if(!EE_EDITING_ROW) return;
+
+  var date = document.getElementById('eeEditDate').value.trim();
+  var typeInput = document.querySelector('input[name="eeEditType"]:checked');
+  var type = typeInput ? typeInput.value : '';
+  var accountSelect = document.getElementById('eeEditAccount');
+  var accountKey = accountSelect.value;
+  var amount = document.getElementById('eeEditAmount').value;
+  var particular = document.getElementById('eeEditParticular').value.trim();
+
+  if(!isValidDDMMYYYY(date)){ alert('Please enter date in DD/MM/YYYY format. / કૃપા કરીને યોગ્ય તારીખ દાખલ કરો.'); return; }
+  if(!accountKey){ alert('Please select an account. / કૃપા કરીને ખાતું પસંદ કરો.'); return; }
+  if(!amount || Number(amount) <= 0){ alert('Please enter a valid amount. / કૃપા કરીને યોગ્ય રકમ દાખલ કરો.'); return; }
+
+  var rowBeingEdited = EE_EDITING_ROW;
+
+  postToApi({
+    action: 'updateEntry',
+    row: rowBeingEdited,
+    date: date,
+    type: type,
+    accountKey: accountKey,
+    amount: amount,
+    particular: particular
+  }).then(function(res){
+    if(res && res.success){
+      closeEditEntryModal();
+      showToast('Entry updated / એન્ટ્રી બદલાઈ');
+      EE_CURRENT_DATE = date;
+      document.getElementById('eeSearchDate').value = date;
+      fetchAccountsAndBalances();
+    } else {
+      alert('Could not update entry. / એન્ટ્રી બદલી શકાઈ નથી.\n' + (res && res.error ? res.error : ''));
+    }
+  });
+}
+
+/* ---------- Delete Entry (Admin) — opens only after the password check ---------- */
+function confirmAndDeleteEntry(rowIndex){
+  var entry = ALL_ENTRIES.find(function(en){ return en.row === rowIndex; });
+  if(!entry){
+    alert('Entry not found. / એન્ટ્રી મળી નથી.');
+    return;
+  }
+
+  var acc = ACCOUNTS.find(function(a){ return a.key === entry.accountKey; });
+  var label = acc ? (acc.number ? (acc.name + ' — ' + acc.number) : acc.name) : entry.accountKey;
+  var sure = confirm(
+    'Delete this entry? / આ એન્ટ્રી કાઢી નાખવી છે?\n\n' +
+    label + '\n₹ ' + Number(entry.amount || 0).toLocaleString('en-IN') + ' — ' + (entry.particular || '') +
+    '\n\nThis cannot be undone. / આ પાછું લાવી શકાશે નહીં.'
+  );
+  if(!sure) return;
+
+  postToApi({
+    action: 'deleteEntry',
+    row: rowIndex
+  }).then(function(res){
+    if(res && res.success){
+      showToast('Entry deleted / એન્ટ્રી કાઢી નાખી');
+      fetchAccountsAndBalances();
+    } else {
+      alert('Could not delete entry. / એન્ટ્રી કાઢી શકાઈ નથી.\n' + (res && res.error ? res.error : ''));
+    }
+  });
+}
+
+/* ---------- Reports (all entries, newest first, with filters) ---------- */
+function openReportsSection(){
+  document.getElementById('reportsMenu').style.display = 'none';
+  document.getElementById('reportsView').style.display = '';
+  populateReportsAccountFilter();
+  document.getElementById('repFilters').style.display = ALL_ENTRIES.length ? 'flex' : 'none';
+  renderReportsList();
+}
+
+function closeReportsSection(){
+  document.getElementById('reportsView').style.display = 'none';
+  document.getElementById('reportsMenu').style.display = '';
+}
+
+function populateReportsAccountFilter(){
+  var select = document.getElementById('repFilterAccount');
+  var current = select.value;
+  var html = '<option value="">All Accounts / બધા ખાતાં</option>';
+  ACCOUNTS.forEach(function(acc){
+    var label = acc.number ? (acc.name + ' — ' + acc.number) : acc.name;
+    html += '<option value="' + acc.key + '">' + label + '</option>';
+  });
+  select.innerHTML = html;
+  select.value = current;
+}
+
+function openRepDatePicker(){
+  var picker = document.getElementById('repFilterDatePicker');
+  if(typeof picker.showPicker === 'function'){
+    picker.showPicker();
+  } else {
+    picker.focus();
+    picker.click();
+  }
+}
+
+function onRepDatePicked(){
+  var picker = document.getElementById('repFilterDatePicker');
+  if(!picker.value) return;
+  document.getElementById('repFilterDate').value = yyyymmddToDDMMYYYY(picker.value);
+  renderReportsList();
+}
+
+function clearReportsFilters(){
+  document.getElementById('repFilterDate').value = '';
+  document.getElementById('repFilterDatePicker').value = '';
+  document.getElementById('repFilterAccount').value = '';
+  document.getElementById('repFilterType').value = '';
+  document.getElementById('repFilterAmount').value = '';
+  renderReportsList();
+}
+
+function renderReportsList(){
+  var list = document.getElementById('reportsList');
+  if(!list) return;
+
+  var dateFilter = document.getElementById('repFilterDate').value.trim();
+  var accFilter = document.getElementById('repFilterAccount').value;
+  var typeFilter = document.getElementById('repFilterType').value;
+  var amountFilter = document.getElementById('repFilterAmount').value.trim();
+
+  var matches = ALL_ENTRIES.filter(function(en){
+    if(dateFilter && en.date.indexOf(dateFilter) === -1) return false;
+    if(accFilter && en.accountKey !== accFilter) return false;
+    if(typeFilter){
+      var t = (en.type === 'CR') ? 'CREDIT' : (en.type === 'DR') ? 'DEBIT' : en.type;
+      if(t !== typeFilter) return false;
+    }
+    if(amountFilter !== '' && Number(en.amount) !== Number(amountFilter)) return false;
+    return true;
+  });
+
+  // Latest entry first: sort by date descending, and by sheet row
+  // descending as a tiebreaker so same-day entries show most-recently
+  // entered first.
+  matches = matches.slice().sort(function(a, b){
+    var d = parseReportDMY(b.date) - parseReportDMY(a.date);
+    if(d !== 0) return d;
+    return b.row - a.row;
+  });
+
+  if(!matches.length){
+    list.innerHTML = '<div class="placeholder-card">No entries found. / કોઈ એન્ટ્રી મળી નથી.</div>';
+    return;
+  }
+
+  var html = '';
+  matches.forEach(function(en){
+    var acc = ACCOUNTS.find(function(a){ return a.key === en.accountKey; });
+    var label = acc ? (acc.number ? (acc.name + ' — ' + acc.number) : acc.name) : en.accountKey;
+    var isCredit = (en.type === 'CREDIT' || en.type === 'CR');
+    var typeLabel = isCredit ? 'Credit / જમા' : 'Debit / ઉધાર';
+    html += '<div class="rep-row">' +
+      '<div class="rep-date">' + en.date + '</div>' +
+      '<div class="rep-info">' +
+        '<div class="acct-name">' + label + '</div>' +
+        '<div class="acct-no">' + (en.particular || '—') + '</div>' +
+      '</div>' +
+      '<span class="ee-type-badge ' + (isCredit ? 'credit' : 'debit') + '">' + typeLabel + '</span>' +
+      '<div class="acct-balance">₹ ' + Number(en.amount || 0).toLocaleString('en-IN') + '</div>' +
+    '</div>';
+  });
+  list.innerHTML = html;
+}
+
+// Local date parser for sorting the Reports list — kept separate from
+// the backend-facing parseDMY used elsewhere so Reports sorting never
+// depends on anything else in the file changing.
+function parseReportDMY(d){
+  if(typeof d === 'string' && d.indexOf('/') !== -1){
+    var parts = d.split('/');
+    if(parts.length === 3){
+      return new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0])).getTime();
+    }
+  }
+  return 0;
 }
 
 fetchAccountsAndBalances();
