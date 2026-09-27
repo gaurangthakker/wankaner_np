@@ -756,58 +756,41 @@
     box-shadow:0 4px 24px rgba(0,0,0,0.2);
     text-transform:none;
   }
-  .a4-head{text-align:center;margin-bottom:8mm;}
+  .a4-head{text-align:center;margin-bottom:4mm;}
   .a4-head h1{
     font-family:var(--font-head);
-    font-size:15.5px;
+    font-size:15px;
     font-weight:700;
-    letter-spacing:0.3px;
+    letter-spacing:0.2px;
     color:#0b2447;
-    margin:0 0 5px;
-  }
-  .a4-head .gu{
-    font-size:13.5px;
-    font-weight:500;
-    color:#123a6b;
-    margin:0 0 8px;
-  }
-  .a4-head .dr-date-line{
-    font-size:12.5px;
-    font-weight:600;
-    color:#0d1b2a;
-    border-top:1px solid #0b2447;
-    border-bottom:1px solid #0b2447;
-    display:inline-block;
-    padding:4px 18px;
-    margin-top:2px;
+    margin:0;
+    white-space:nowrap;
   }
   .a4-table{
     width:100%;
     border-collapse:collapse;
-    font-size:11px;
+    font-size:10.5px;
+    font-family:'Arial Narrow', Arial, var(--font-body);
+    line-height:1.15;
   }
   .a4-table th,.a4-table td{
     border:1px solid #0b2447;
-    padding:6px 8px;
+    padding:3.5px 6px;
   }
   .a4-table th{
     background:#0b2447;
     color:#fff;
     font-family:var(--font-head);
-    font-size:10px;
+    font-size:10.5px;
+    font-weight:600;
     text-align:center;
+    padding:4px 6px;
   }
   .a4-table td{text-align:right;}
   .a4-table td:first-child{text-align:left;}
   .a4-table tfoot td{
     font-weight:700;
     background:#e3fbff;
-  }
-  .a4-foot-note{
-    margin-top:8mm;
-    font-size:9.5px;
-    color:#5b6b7c;
-    text-align:right;
   }
 
   @media print{
@@ -1386,24 +1369,21 @@
   </div>
   <div class="a4-page" id="dailyReportPage">
     <div class="a4-head">
-      <h1>ACCOUNT WISE DAILY REPORTS OF - WANKANER NAGARPALIKA</h1>
-      <div class="gu">વાંકાનેર નગરપાલિકાનો ખાતાવાર દૈનિક અહેવાલ</div>
-      <div class="dr-date-line">Date / તારીખ : <span id="drReportDateLabel">—</span></div>
+      <h1 id="drReportHeading">વાંકાનેર નગરપાલિકા - બેંક ખાતાવાર દૈનિક અહેવાલ (તારીખ: <span id="drReportDateLabel">—</span>)</h1>
     </div>
     <table class="a4-table">
       <thead>
         <tr>
-          <th>Account Details and Number / ખાતાની વિગત અને નંબર</th>
-          <th>Opening Balance (₹) / શરૂઆતનું બેલેન્સ</th>
-          <th>Credit (₹) / જમા</th>
-          <th>Debit (₹) / ઉધાર</th>
-          <th>Closing Balance (₹) / બંધ બેલેન્સ</th>
+          <th>ખાતાની વિગત અને નંબર</th>
+          <th>શરૂઆતનું બેલેન્સ (₹)</th>
+          <th>જમા (₹)</th>
+          <th>ઉધાર (₹)</th>
+          <th>બંધ બેલેન્સ (₹)</th>
         </tr>
       </thead>
       <tbody id="drReportBody"></tbody>
       <tfoot id="drReportFoot"></tfoot>
     </table>
-    <div class="a4-foot-note">Generated on <span id="drGeneratedOn"></span> — Shroff Book, Wankaner Nagarpalika</div>
   </div>
 </div>
 
@@ -2481,7 +2461,7 @@ function onDrDatePicked(){
 }
 
 function fmtAmt(n){
-  return Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  return Math.round(Number(n || 0)).toLocaleString('en-IN', { minimumFractionDigits:0, maximumFractionDigits:0 });
 }
 
 function generateDailyReport(){
@@ -2511,7 +2491,6 @@ function generateDailyReport(){
 
 function renderDailyReportTable(){
   document.getElementById('drReportDateLabel').textContent = DR_CURRENT_DATE;
-  document.getElementById('drGeneratedOn').textContent = todayDDMMYYYY();
 
   var totOpen = 0, totCredit = 0, totDebit = 0, totClose = 0;
   var html = '';
@@ -2529,7 +2508,7 @@ function renderDailyReportTable(){
 
   document.getElementById('drReportFoot').innerHTML =
     '<tr>' +
-      '<td>TOTAL / કુલ</td>' +
+      '<td>કુલ</td>' +
       '<td>' + fmtAmt(totOpen) + '</td>' +
       '<td>' + fmtAmt(totCredit) + '</td>' +
       '<td>' + fmtAmt(totDebit) + '</td>' +
@@ -2604,37 +2583,33 @@ function downloadDailyReportExcel(){
   }
 
   var aoa = [];
-  aoa.push(['ACCOUNT WISE DAILY REPORTS OF - WANKANER NAGARPALIKA']);
-  aoa.push(['વાંકાનેર નગરપાલિકાનો ખાતાવાર દૈનિક અહેવાલ']);
-  aoa.push(['Date: ' + DR_CURRENT_DATE]);
+  aoa.push(['વાંકાનેર નગરપાલિકા - બેંક ખાતાવાર દૈનિક અહેવાલ (તારીખ: ' + DR_CURRENT_DATE + ')']);
   aoa.push([]);
-  aoa.push(['Account Details and Number', 'Opening Balance (Rs.)', 'Credit (Rs.)', 'Debit (Rs.)', 'Closing Balance (Rs.)']);
+  aoa.push(['ખાતાની વિગત અને નંબર', 'શરૂઆતનું બેલેન્સ (₹)', 'જમા (₹)', 'ઉધાર (₹)', 'બંધ બેલેન્સ (₹)']);
 
   var totOpen=0, totCredit=0, totDebit=0, totClose=0;
   DR_CURRENT_ROWS.forEach(function(row){
     totOpen += row.opening; totCredit += row.credit; totDebit += row.debit; totClose += row.closing;
     aoa.push([
       row.label,
-      Number(row.opening.toFixed(2)),
-      Number(row.credit.toFixed(2)),
-      Number(row.debit.toFixed(2)),
-      Number(row.closing.toFixed(2))
+      Math.round(row.opening),
+      Math.round(row.credit),
+      Math.round(row.debit),
+      Math.round(row.closing)
     ]);
   });
   aoa.push([
-    'TOTAL',
-    Number(totOpen.toFixed(2)),
-    Number(totCredit.toFixed(2)),
-    Number(totDebit.toFixed(2)),
-    Number(totClose.toFixed(2))
+    'કુલ',
+    Math.round(totOpen),
+    Math.round(totCredit),
+    Math.round(totDebit),
+    Math.round(totClose)
   ]);
 
   var ws = XLSX.utils.aoa_to_sheet(aoa);
   ws['!cols'] = [{ wch:34 }, { wch:18 }, { wch:14 }, { wch:14 }, { wch:18 }];
   ws['!merges'] = [
-    { s:{ r:0, c:0 }, e:{ r:0, c:4 } },
-    { s:{ r:1, c:0 }, e:{ r:1, c:4 } },
-    { s:{ r:2, c:0 }, e:{ r:2, c:4 } }
+    { s:{ r:0, c:0 }, e:{ r:0, c:4 } }
   ];
 
   var wb = XLSX.utils.book_new();
