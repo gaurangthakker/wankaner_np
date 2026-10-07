@@ -1039,7 +1039,7 @@
           <div class="form-group">
             <label>Date / તારીખ</label>
             <div class="date-input-wrap">
-              <input type="text" id="entryDate" class="form-input" placeholder="DD/MM/YYYY" readonly onclick="openDatePicker()">
+              <input type="text" id="entryDate" class="form-input" placeholder="DD/MM/YYYY" maxlength="10" inputmode="numeric" autocomplete="off">
               <button type="button" class="date-picker-btn" onclick="openDatePicker()">📅</button>
               <input type="date" id="entryDatePicker" class="hidden-date-input" onchange="onDatePicked()">
             </div>
@@ -1103,7 +1103,7 @@
 
           <div id="repFilters" class="ee-filters" style="display:none;">
             <div class="date-input-wrap" style="flex:1;min-width:150px;">
-              <input type="text" id="repFilterDate" class="form-input" placeholder="DD/MM/YYYY"
+              <input type="text" id="repFilterDate" class="form-input" placeholder="DD/MM/YYYY" maxlength="10" inputmode="numeric" autocomplete="off"
                      oninput="renderReportsList()"
                      onkeydown="if(event.key==='Enter'){renderReportsList();}">
               <button type="button" class="date-picker-btn" onclick="openRepDatePicker()">📅</button>
@@ -1156,7 +1156,7 @@
             <div class="form-group">
               <label>Closing Balance Date / બંધ બેલેન્સ તારીખ</label>
               <div class="date-input-wrap">
-                <input type="text" id="ubDate" class="form-input" placeholder="DD/MM/YYYY" readonly onclick="openUbDatePicker()">
+                <input type="text" id="ubDate" class="form-input" placeholder="DD/MM/YYYY" maxlength="10" inputmode="numeric" autocomplete="off">
                 <button type="button" class="date-picker-btn" onclick="openUbDatePicker()">📅</button>
                 <input type="date" id="ubDatePicker" class="hidden-date-input" onchange="onUbDatePicked()">
               </div>
@@ -1196,7 +1196,7 @@
             <div class="form-group">
               <label>Search by Date / તારીખ પ્રમાણે શોધો</label>
               <div class="date-input-wrap">
-                <input type="text" id="eeSearchDate" class="form-input" placeholder="DD/MM/YYYY"
+                <input type="text" id="eeSearchDate" class="form-input" placeholder="DD/MM/YYYY" maxlength="10" inputmode="numeric" autocomplete="off"
                        oninput="onEeSearchDateInput()"
                        onkeydown="if(event.key==='Enter'){onEeSearchDateEnter();}"
                        onblur="onEeSearchDateBlur()">
@@ -1297,7 +1297,7 @@
       <div class="form-group">
         <label>Date / તારીખ</label>
         <div class="date-input-wrap">
-          <input type="text" id="eeEditDate" class="form-input" placeholder="DD/MM/YYYY" readonly onclick="openEeEditDatePicker()">
+          <input type="text" id="eeEditDate" class="form-input" placeholder="DD/MM/YYYY" maxlength="10" inputmode="numeric" autocomplete="off">
           <button type="button" class="date-picker-btn" onclick="openEeEditDatePicker()">📅</button>
           <input type="date" id="eeEditDatePicker" class="hidden-date-input" onchange="onEeEditDatePicked()">
         </div>
@@ -1336,7 +1336,7 @@
       <div class="form-group">
         <label>Report Date / રિપોર્ટ તારીખ</label>
         <div class="date-input-wrap">
-          <input type="text" id="drDate" class="form-input" placeholder="DD/MM/YYYY" readonly onclick="openDrDatePicker()">
+          <input type="text" id="drDate" class="form-input" placeholder="DD/MM/YYYY" maxlength="10" inputmode="numeric" autocomplete="off">
           <button type="button" class="date-picker-btn" onclick="openDrDatePicker()">📅</button>
           <input type="date" id="drDatePicker" class="hidden-date-input" onchange="onDrDatePicked()">
         </div>
@@ -1398,6 +1398,43 @@
 /* Paste your deployed Google Apps Script Web App URL below (ends in /exec).
    See the Code.gs file for the backend code + deployment steps. */
 var API_URL = 'https://script.google.com/macros/s/AKfycbz3SuAU-XUoftU-MRfUGsEl-pP7-RUsWZ-eJ8yx1_oMoFo8sC_Wl1qr-iN-MmPtYQWd/exec';
+
+/* ---------- Single date format: DD/MM/YYYY ---------- */
+function pad2(n){ return String(n).padStart(2,'0'); }
+
+// Typing karte waqt automatic "/" lag jaaye: 01092026 -> 01/09/2026
+function autoFormatDateInput(el){
+  var v = el.value.replace(/\D/g,'').slice(0,8);
+  var out = v;
+  if(v.length > 4) out = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
+  else if(v.length > 2) out = v.slice(0,2) + '/' + v.slice(2);
+  el.value = out;
+}
+
+// 1-9-26, 01.09.2026, 01-09-2026 -> hamesha DD/MM/YYYY. Invalid ho to ''.
+function normalizeDate(v){
+  v = String(v || '').trim().replace(/[-.\s]+/g, '/');
+  var m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/);
+  if(!m) return '';
+  var d = Number(m[1]), mo = Number(m[2]), y = Number(m[3]);
+  if(m[3].length === 2) y += 2000;
+  var dt = new Date(y, mo - 1, d);
+  if(dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) return '';
+  return pad2(d) + '/' + pad2(mo) + '/' + y;
+}
+
+// Har date field par auto-format (typing) lagao
+['entryDate','ubDate','eeEditDate','drDate','eeSearchDate','repFilterDate'].forEach(function(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('input', function(){ autoFormatDateInput(el); });
+  if(id !== 'repFilterDate'){
+    el.addEventListener('blur', function(){
+      var n = normalizeDate(el.value);
+      if(n) el.value = n;
+    });
+  }
+});
 
 function showView(name){
   document.querySelectorAll('.view').forEach(function(v){
@@ -1476,7 +1513,9 @@ document.getElementById('entryDate').value = todayDDMMYYYY();
 document.getElementById('entryDatePicker').max = todayYYYYMMDD();
 
 function openConfirm(){
-  var date = document.getElementById('entryDate').value.trim();
+  var date = normalizeDate(document.getElementById('entryDate').value);
+  if(!date){ alert('Please enter a valid date (DD/MM/YYYY). / કૃપા કરીને સાચી તારીખ દાખલ કરો.'); return; }
+  document.getElementById('entryDate').value = date;
   var type = document.querySelector('input[name="entryType"]:checked').value;
   var accountSelect = document.getElementById('entryAccount');
   var account = accountSelect.value;
@@ -1541,7 +1580,7 @@ function confirmEntry(){
 
   var entry = {
     action: 'addEntry',
-    date: document.getElementById('entryDate').value.trim(),
+    date: normalizeDate(document.getElementById('entryDate').value),
     type: document.querySelector('input[name="entryType"]:checked').value,
     accountKey: accountKey,
     amount: document.getElementById('entryAmount').value,
@@ -1902,7 +1941,7 @@ function onUbDatePicked(){
 }
 
 function submitUpdateBalance(){
-  var date = document.getElementById('ubDate').value.trim();
+  var date = normalizeDate(document.getElementById('ubDate').value);
   if(!date){ alert('Please select the closing balance date. / કૃપા કરીને તારીખ પસંદ કરો.'); return; }
   if(isFutureDate(date)){ alert('Future date is not allowed. / ભવિષ્યની તારીખ માન્ય નથી.'); return; }
 
@@ -2148,7 +2187,7 @@ function onEeEditDatePicked(){
 function submitEditEntry(){
   if(!EE_EDITING_ROW) return;
 
-  var date = document.getElementById('eeEditDate').value.trim();
+  var date = normalizeDate(document.getElementById('eeEditDate').value);
   var typeInput = document.querySelector('input[name="eeEditType"]:checked');
   var type = typeInput ? typeInput.value : '';
   var accountSelect = document.getElementById('eeEditAccount');
@@ -2465,7 +2504,7 @@ function fmtAmt(n){
 }
 
 function generateDailyReport(){
-  var date = document.getElementById('drDate').value.trim();
+  var date = normalizeDate(document.getElementById('drDate').value);
   if(!isValidDDMMYYYY(date)){
     alert('Please enter date in DD/MM/YYYY format. / કૃપા કરીને યોગ્ય તારીખ દાખલ કરો.');
     return;
