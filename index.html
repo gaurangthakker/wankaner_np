@@ -1309,7 +1309,7 @@
 
           <div class="form-group">
             <label>Account / ખાતું</label>
-            <select id="entryAccount" class="form-input">
+            <select id="entryAccount" class="form-input" onchange="particularChanged('entry')">
               <option value="">Select Account / ખાતું પસંદ કરો</option>
             </select>
           </div>
@@ -1321,7 +1321,10 @@
 
           <div class="form-group">
             <label>Particular / વિગત</label>
-            <textarea id="entryParticular" class="form-input" rows="3" placeholder="Enter particular / description"></textarea>
+            <select id="entryParticularSel" class="form-input" onchange="particularChanged('entry')"></select>
+            <select id="entryBankSel" class="form-input" style="display:none;margin-top:8px;" onchange="particularChanged('entry')"></select>
+            <input type="text" id="entryOtherTxt" class="form-input" style="display:none;margin-top:8px;" placeholder="Type particular manually / જાતે વિગત લખો" autocomplete="off" oninput="particularChanged('entry')">
+            <input type="hidden" id="entryParticular">
           </div>
 
           <button class="save-btn" onclick="openConfirm()">Save Entry / એન્ટ્રી સેવ કરો</button>
@@ -1580,7 +1583,7 @@
       </div>
       <div class="form-group">
         <label>Account / ખાતું</label>
-        <select id="eeEditAccount" class="form-input"></select>
+        <select id="eeEditAccount" class="form-input" onchange="particularChanged('ee')"></select>
       </div>
       <div class="form-group">
         <label>Amount (₹) / રકમ (₹)</label>
@@ -1588,7 +1591,10 @@
       </div>
       <div class="form-group">
         <label>Particular / વિગત</label>
-        <textarea id="eeEditParticular" class="form-input" rows="3"></textarea>
+        <select id="eeEditParticularSel" class="form-input" onchange="particularChanged('ee')"></select>
+        <select id="eeEditBankSel" class="form-input" style="display:none;margin-top:8px;" onchange="particularChanged('ee')"></select>
+        <input type="text" id="eeEditOtherTxt" class="form-input" style="display:none;margin-top:8px;" placeholder="Type particular manually / જાતે વિગત લખો" autocomplete="off" oninput="particularChanged('ee')">
+        <input type="hidden" id="eeEditParticular">
       </div>
     </div>
     <div class="modal-actions">
@@ -1814,6 +1820,137 @@ refreshTodayDisplays();
 document.getElementById('entryDate').value = todayDDMMYYYY();
 document.getElementById('entryDatePicker').max = todayYYYYMMDD();
 
+/* ---------- Particular picker (dropdown + Bank Transfer account list) ---------- */
+var PARTICULAR_OPTIONS = [
+  'CHEQUE DEBIT (ચેક ઉધાર)',
+  'CHEQUE CREDIT (ચેક જમા)',
+  'CASH DEBIT (રોકડ ઉધાર)',
+  'CASH CREDIT (રોકડ જમા)',
+  'ONLINE INCOME DEBIT (ઓનલાઇન આવક ઉધાર)',
+  'ONLINE INCOME CREDIT (ઓનલાઇન આવક જમા)',
+  'INCOME (આવક)',
+  'PAYMENT (ચુકવણી)',
+  'HAVALO (હવાલો)'
+];
+var PARTICULAR_BANK = 'BANK TRANSFER (બેંક ટ્રાન્સફર)';
+var PARTICULAR_OTHER = '__OTHER__';
+var PARTICULAR_CFG = {
+  entry: { sel:'entryParticularSel', bank:'entryBankSel', other:'entryOtherTxt', hid:'entryParticular', acc:'entryAccount' },
+  ee:    { sel:'eeEditParticularSel', bank:'eeEditBankSel', other:'eeEditOtherTxt', hid:'eeEditParticular', acc:'eeEditAccount' }
+};
+
+function particularAddOption(select, value, text, custom){
+  var o = document.createElement('option');
+  o.value = value; o.textContent = text;
+  if(custom) o.setAttribute('data-custom', '1');
+  select.appendChild(o);
+  return o;
+}
+
+function particularInit(){
+  Object.keys(PARTICULAR_CFG).forEach(function(k){
+    var sel = document.getElementById(PARTICULAR_CFG[k].sel);
+    if(!sel) return;
+    sel.innerHTML = '';
+    particularAddOption(sel, '', 'Select Particular / વિગત પસંદ કરો');
+    PARTICULAR_OPTIONS.forEach(function(t){ particularAddOption(sel, t, t); });
+    particularAddOption(sel, PARTICULAR_BANK, PARTICULAR_BANK);
+    particularAddOption(sel, PARTICULAR_OTHER, 'OTHER / અન્ય (type manually / જાતે લખો)');
+  });
+}
+
+// Rebuild the bank-account list (all accounts except the one chosen above).
+function particularFillBanks(c, keepValue){
+  var bank = document.getElementById(c.bank);
+  var accKey = document.getElementById(c.acc).value;
+  var prev = keepValue != null ? keepValue : bank.value;
+  bank.innerHTML = '';
+  particularAddOption(bank, '', 'Select Bank Account / બેંક ખાતું પસંદ કરો');
+  ACCOUNTS.forEach(function(acc){
+    if(acc.key === accKey) return;
+    var label = acc.number ? (acc.name + ' — ' + acc.number) : acc.name;
+    particularAddOption(bank, label, label);
+  });
+  if(prev){
+    var found = false;
+    for(var i = 0; i < bank.options.length; i++){ if(bank.options[i].value === prev){ found = true; break; } }
+    if(!found) particularAddOption(bank, prev, prev, true);
+    bank.value = prev;
+  }
+}
+
+function particularChanged(p){
+  var c = PARTICULAR_CFG[p];
+  var sel = document.getElementById(c.sel);
+  var bank = document.getElementById(c.bank);
+  var other = document.getElementById(c.other);
+  var hid = document.getElementById(c.hid);
+  if(sel.value === PARTICULAR_BANK){
+    bank.style.display = '';
+    other.style.display = 'none';
+    particularFillBanks(c);
+    hid.value = bank.value ? (PARTICULAR_BANK + ' — ' + bank.value) : '';
+  } else if(sel.value === PARTICULAR_OTHER){
+    bank.style.display = 'none';
+    other.style.display = '';
+    hid.value = other.value.trim();
+  } else {
+    bank.style.display = 'none';
+    other.style.display = 'none';
+    hid.value = sel.value;
+  }
+}
+
+function particularSet(p, value){
+  var c = PARTICULAR_CFG[p];
+  var sel = document.getElementById(c.sel);
+  var bank = document.getElementById(c.bank);
+  value = (value || '').trim();
+  // drop any earlier "custom" option
+  Array.prototype.slice.call(sel.querySelectorAll('option[data-custom]')).forEach(function(o){ sel.removeChild(o); });
+  var other = document.getElementById(c.other);
+  bank.style.display = 'none';
+  bank.innerHTML = '';
+  other.style.display = 'none';
+  other.value = '';
+  if(!value){ sel.value = ''; particularChanged(p); return; }
+  var prefix = PARTICULAR_BANK + ' — ';
+  if(value.indexOf(prefix) === 0){
+    sel.value = PARTICULAR_BANK;
+    bank.style.display = '';
+    particularFillBanks(c, value.slice(prefix.length));
+    document.getElementById(c.hid).value = value;
+    return;
+  }
+  var found = false;
+  for(var i = 0; i < sel.options.length; i++){ if(sel.options[i].value === value){ found = true; break; } }
+  if(!found){
+    // free text (typed manually / older entries) opens in the manual box
+    sel.value = PARTICULAR_OTHER;
+    other.style.display = '';
+    other.value = value;
+    document.getElementById(c.hid).value = value;
+    return;
+  }
+  sel.value = value;
+  document.getElementById(c.hid).value = value;
+}
+
+function particularValid(p){
+  var c = PARTICULAR_CFG[p];
+  if(document.getElementById(c.sel).value === PARTICULAR_BANK && !document.getElementById(c.bank).value){
+    alert('Please select the bank account for Bank Transfer. / કૃપા કરીને બેંક ટ્રાન્સફર માટે ખાતું પસંદ કરો.');
+    return false;
+  }
+  if(document.getElementById(c.sel).value === PARTICULAR_OTHER && !document.getElementById(c.other).value.trim()){
+    alert('Please type the particular. / કૃપા કરીને વિગત લખો.');
+    return false;
+  }
+  return true;
+}
+
+particularInit();
+
 function openConfirm(){
   var date = normalizeDate(document.getElementById('entryDate').value);
   if(!date){ alert('Please enter a valid date (DD/MM/YYYY). / કૃપા કરીને સાચી તારીખ દાખલ કરો.'); return; }
@@ -1827,6 +1964,7 @@ function openConfirm(){
 
   if(!account){ alert('Please select an account. / કૃપા કરીને ખાતું પસંદ કરો.'); return; }
   if(!amount || Number(amount) <= 0){ alert('Please enter a valid amount. / કૃપા કરીને યોગ્ય રકમ દાખલ કરો.'); return; }
+  if(!particularValid('entry')) return;
   if(isFutureDate(date)){ alert('Future date is not allowed. / ભવિષ્યની તારીખ માન્ય નથી.'); return; }
 
   if(type === 'Debit'){
@@ -1927,7 +2065,7 @@ function confirmEntry(){
   // Reset form for next entry
   document.getElementById('entryAccount').value = '';
   document.getElementById('entryAmount').value = '';
-  document.getElementById('entryParticular').value = '';
+  particularSet('entry', '');
   document.getElementById('entryDate').value = todayDDMMYYYY();
 }
 
@@ -2578,7 +2716,7 @@ function openEditEntryModal(rowIndex){
 
   renderEeEditAccountSelect(entry.accountKey);
   document.getElementById('eeEditAmount').value = entry.amount;
-  document.getElementById('eeEditParticular').value = entry.particular;
+  particularSet('ee', entry.particular);
 
   document.getElementById('editEntryModal').classList.add('active');
 }
@@ -2629,6 +2767,7 @@ function submitEditEntry(){
   if(!isValidDDMMYYYY(date)){ alert('Please enter date in DD/MM/YYYY format. / કૃપા કરીને યોગ્ય તારીખ દાખલ કરો.'); return; }
   if(!accountKey){ alert('Please select an account. / કૃપા કરીને ખાતું પસંદ કરો.'); return; }
   if(!amount || Number(amount) <= 0){ alert('Please enter a valid amount. / કૃપા કરીને યોગ્ય રકમ દાખલ કરો.'); return; }
+  if(!particularValid('ee')) return;
 
   var rowBeingEdited = EE_EDITING_ROW;
 
