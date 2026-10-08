@@ -951,7 +951,10 @@
     font:inherit;
     font-weight:700;
     color:#000;
-    padding:2px 0;
+    padding:0;
+    height:18px;
+    line-height:18px;
+    box-sizing:border-box;
     outline:none;
     -webkit-appearance:none;
     appearance:none;
@@ -959,9 +962,17 @@
   }
   .dr-input:focus{background:#e6e6e6;}
   /* While the PDF screenshot is taken, the inputs look like plain text. */
-  .dr-capturing .dr-input{
-    border-bottom-color:transparent;
-    background:none;
+  /* Plain-text mirror of the inputs: used for PDF capture and print so the
+     amount is never clipped/hidden by the input box. */
+  .dr-val{display:none;}
+  .dr-capturing .dr-input{display:none !important;}
+  .dr-capturing .dr-val{
+    display:block;
+    text-align:right;
+    font-weight:700;
+    line-height:18px;
+    height:18px;
+    white-space:nowrap;
   }
   .dr-tally-note{
     max-width:215.9mm;
@@ -1027,7 +1038,15 @@
     }
     .dr-toolbar{display:none;}
     .dr-tally-note{display:none !important;}
-    .dr-input{border:none;background:none;}
+    .dr-input{display:none !important;}
+    .dr-val{
+      display:block !important;
+      text-align:right;
+      font-weight:700;
+      line-height:18px;
+      height:18px;
+      white-space:nowrap;
+    }
     @page{size:legal portrait;margin:0;}
   }
 
@@ -1636,7 +1655,7 @@
     </table>
 
     <div class="dr-summary-box">
-      <div class="dr-sum-title">SUMMARY / સારાંશ</div>
+      <div class="dr-sum-title">SUMMARY / સમરી</div>
     <table class="dr-summary" id="drSummary">
       <tr>
         <td class="dr-sum-label">OPENING BALANCE / શરૂઆતનું બેલેન્સ</td>
@@ -1644,7 +1663,7 @@
       </tr>
       <tr>
         <td class="dr-sum-label">INCOME / આવક</td>
-        <td class="dr-sum-amt"><input type="text" id="drIncome" class="dr-input" inputmode="decimal" autocomplete="off" oninput="drInputSanitize(this)" onfocus="drInputFocus(this)" onblur="drInputBlur(this)"></td>
+        <td class="dr-sum-amt"><input type="text" id="drIncome" class="dr-input" inputmode="decimal" autocomplete="off" oninput="drInputSanitize(this)" onfocus="drInputFocus(this)" onblur="drInputBlur(this)"><span class="dr-val" id="drIncomeVal"></span></td>
       </tr>
       <tr class="dr-sum-total">
         <td class="dr-sum-label">TOTAL / કુલ</td>
@@ -1652,7 +1671,7 @@
       </tr>
       <tr>
         <td class="dr-sum-label">PAYMENT / ચુકવણી</td>
-        <td class="dr-sum-amt"><input type="text" id="drPayment" class="dr-input" inputmode="decimal" autocomplete="off" oninput="drInputSanitize(this)" onfocus="drInputFocus(this)" onblur="drInputBlur(this)"></td>
+        <td class="dr-sum-amt"><input type="text" id="drPayment" class="dr-input" inputmode="decimal" autocomplete="off" oninput="drInputSanitize(this)" onfocus="drInputFocus(this)" onblur="drInputBlur(this)"><span class="dr-val" id="drPaymentVal"></span></td>
       </tr>
       <tr class="dr-sum-closing">
         <td class="dr-sum-label">CLOSING BALANCE / ક્લોસીંગ બેલેન્સ</td>
@@ -2937,7 +2956,8 @@ function onDrDatePicked(){
 function drR2(n){ return Math.round((Number(n || 0) + Number.EPSILON) * 100) / 100; }
 
 function fmtAmt(n){
-  return (Math.round((Number(n || 0) + Number.EPSILON) * 100) / 100).toLocaleString('en-IN', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  var r = Math.round((Number(n || 0) + Number.EPSILON) * 100) / 100 + 0;   // "+ 0" turns -0 into 0
+  return r.toLocaleString('en-IN', { minimumFractionDigits:2, maximumFractionDigits:2 });
 }
 
 function generateDailyReport(){
@@ -2991,17 +3011,21 @@ function renderDailyReportTable(){
       '<td>' + fmtAmt(totClose) + '</td>' +
     '</tr>';
 
-  // Summary block below the table: opening total comes from the table,
-  // Income and Payment are typed by the user (cleared for every new report).
+  // Summary block below the table. Opening = table's opening total.
+  // Income and Payment start EMPTY; the user enters both.
   DR_TOT.open = totOpen;
   DR_TOT.close = totClose;
+  DR_TOT.credit = totCredit;
+  DR_PAY_MANUAL = true; // no automatic Payment value
   document.getElementById('drIncome').value = '';
   document.getElementById('drPayment').value = '';
   drSummaryRecalc();
 }
 
 /* ---------- Summary block (Opening / Income / Total / Payment / Closing) ---------- */
-var DR_TOT = { open: 0, close: 0 };
+var DR_TOT = { open: 0, close: 0, credit: 0 };
+// true once the user has typed their own Payment figure (stops the auto difference)
+var DR_PAY_MANUAL = false;
 
 function drParseNum(v){
   var n = parseFloat(String(v == null ? '' : v).replace(/,/g, '').trim());
@@ -3018,10 +3042,20 @@ function drSummaryValues(){
 }
 
 function drSummaryRecalc(){
+  // Payment follows the difference (Opening + Income - table Closing) until the user types their own.
+  if(!DR_PAY_MANUAL){
+    var incNow = drParseNum(document.getElementById('drIncome').value);
+    document.getElementById('drPayment').value = fmtAmt(DR_TOT.open + incNow - DR_TOT.close);
+  }
   var v = drSummaryValues();
   document.getElementById('drSumOpening').textContent = fmtAmt(v.opening);
   document.getElementById('drSumTotal').textContent = fmtAmt(v.total);
   document.getElementById('drSumClosing').textContent = fmtAmt(v.closing);
+  // Keep the plain-text mirrors (used in PDF/print) in sync with the inputs
+  var incVal = document.getElementById('drIncomeVal');
+  var payVal = document.getElementById('drPaymentVal');
+  if(incVal) incVal.textContent = document.getElementById('drIncome').value.trim() === '' ? '' : fmtAmt(v.income);
+  if(payVal) payVal.textContent = document.getElementById('drPayment').value.trim() === '' ? '' : fmtAmt(v.payment);
 
   // Screen-only tally check against the table's Closing Balance total
   // (hidden in print and left out of the PDF).
@@ -3048,6 +3082,7 @@ function drInputSanitize(el){
     t = t.slice(0, firstDot + 1) + t.slice(firstDot + 1).replace(/\./g, '');
   }
   if(el.value !== t) el.value = t;
+  if(el.id === 'drPayment') DR_PAY_MANUAL = true;
   drSummaryRecalc();
 }
 
@@ -3056,6 +3091,9 @@ function drInputFocus(el){
 }
 
 function drInputBlur(el){
+  if(el.value.trim() === ''){
+    // Left empty: stays empty (no auto-fill).
+  }
   if(el.value.trim() !== ''){
     el.value = fmtAmt(drParseNum(el.value));
   }
