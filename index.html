@@ -765,7 +765,7 @@
   }
   .dr-overlay.active{display:block;}
   .dr-toolbar{
-    max-width:210mm;
+    max-width:215.9mm;
     margin:0 auto 14px;
     display:flex;
     align-items:center;
@@ -793,12 +793,14 @@
   .dr-download-btn svg{width:16px;height:16px;flex-shrink:0;}
 
   .a4-page{
-    width:210mm;
-    min-height:297mm;
+    width:215.9mm;
+    min-height:355.6mm;
+    display:flex;
+    flex-direction:column;
     max-width:100%;
     margin:0 auto;
     background:#ffffff;
-    color:#0d1b2a;
+    color:#000;
     padding:14mm 12mm;
     box-shadow:0 4px 24px rgba(0,0,0,0.2);
     text-transform:none;
@@ -806,12 +808,12 @@
   .a4-head{text-align:center;margin-bottom:4mm;}
   .a4-head h1{
     font-family:var(--font-head);
-    font-size:15px;
-    font-weight:700;
+    font-size:19px;
+    font-weight:800;
     letter-spacing:0.2px;
-    color:#0b2447;
+    line-height:1.35;
+    color:#000;
     margin:0;
-    white-space:nowrap;
   }
   .a4-table{
     width:100%;
@@ -821,15 +823,15 @@
     line-height:1.15;
   }
   .a4-table th,.a4-table td{
-    border:1px solid #0b2447;
+    border:1px solid #000;
     padding:3.5px 6px;
   }
   .a4-table th{
-    background:#0b2447;
-    color:#fff;
+    background:none;
+    color:#000;
     font-family:var(--font-head);
-    font-size:10.5px;
-    font-weight:600;
+    font-size:13px;
+    font-weight:800;
     text-align:center;
     padding:4px 6px;
   }
@@ -837,7 +839,46 @@
   .a4-table td:first-child{text-align:left;}
   .a4-table tfoot td{
     font-weight:700;
-    background:#e3fbff;
+    background:none;
+  }
+  .dr-stamps{
+    margin-top:auto;
+    padding-top:30mm;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:10mm;
+  }
+  .dr-stamp{
+    min-width:62mm;
+    text-align:center;
+    font-family:Arial, var(--font-body);
+    color:#000;
+    border:1.3mm double #000;
+    border-radius:2mm;
+    padding:3mm 5mm;
+    background:#fff;
+  }
+  .dr-stamp .st-role{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.8px;
+    line-height:1.3;
+  }
+  .dr-stamp .st-org-gu{
+    font-size:11.5px;
+    font-weight:700;
+    line-height:1.3;
+    margin-top:0.8mm;
+  }
+  .dr-stamp .st-org{
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:0.5px;
+    line-height:1.3;
+    margin-top:1.5mm;
+    padding-top:1.5mm;
+    border-top:0.35mm solid #000;
   }
 
   @media print{
@@ -847,11 +888,11 @@
       position:absolute;top:0;left:0;
       box-shadow:none;
       margin:0;
-      width:210mm;
-      min-height:297mm;
+      width:215.9mm;
+      min-height:355.6mm;
     }
     .dr-toolbar{display:none;}
-    @page{size:A4;margin:0;}
+    @page{size:legal portrait;margin:0;}
   }
 
   .toast{
@@ -1446,6 +1487,10 @@
       <tbody id="drReportBody"></tbody>
       <tfoot id="drReportFoot"></tfoot>
     </table>
+    <div class="dr-stamps">
+      <div class="dr-stamp"><div class="st-role">ACCOUNTANT</div><div class="st-org">WANKANER NAGARPALIKA</div><div class="st-org-gu">વાંકાનેર નગરપાલિકા</div></div>
+      <div class="dr-stamp"><div class="st-role">CHIEF OFFICER</div><div class="st-org">WANKANER NAGARPALIKA</div><div class="st-org-gu">વાંકાનેર નગરપાલિકા</div></div>
+    </div>
   </div>
 </div>
 
@@ -2810,11 +2855,12 @@ function downloadDailyReportPDF(){
     pageEl.style.boxShadow = prevShadow;
 
     var jsPDFCtor = window.jspdf.jsPDF;
-    var doc = new jsPDFCtor({ unit: 'mm', format: 'a4' });
-    var pageW = 210, pageH = 297;
+    // Legal = 8.5 x 14 in = 215.9 x 355.6 mm
+    var doc = new jsPDFCtor({ unit: 'mm', format: [215.9, 355.6], orientation: 'portrait' });
+    var pageW = 215.9, pageH = 355.6;
     var imgData = canvas.toDataURL('image/png');
 
-    // Always a single A4 page: keep the image at full page width, and
+    // Always a single Legal page: keep the image at full page width, and
     // only compress the height when the content is taller than one
     // page — width is never shrunk or centered.
     var imgW = pageW;
@@ -2860,6 +2906,12 @@ function downloadDailyReportExcel(){
     drR2(totDebit),
     drR2(totClose)
   ]);
+  aoa.push([]);
+  aoa.push([]);
+  aoa.push([]);
+  aoa.push(['ACCOUNTANT', '', '', '', 'CHIEF OFFICER']);
+  aoa.push(['WANKANER NAGARPALIKA', '', '', '', 'WANKANER NAGARPALIKA']);
+  aoa.push(['વાંકાનેર નગરપાલિકા', '', '', '', 'વાંકાનેર નગરપાલિકા']);
 
   var ws = XLSX.utils.aoa_to_sheet(aoa);
   Object.keys(ws).forEach(function(addr){
