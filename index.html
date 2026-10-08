@@ -1378,7 +1378,7 @@
           <th>શરૂઆતનું બેલેન્સ (₹)</th>
           <th>જમા (₹)</th>
           <th>ઉધાર (₹)</th>
-          <th>બંધ બેલેન્સ (₹)</th>
+          <th>ક્લોસીંગ બેલેન્સ (₹)</th>
         </tr>
       </thead>
       <tbody id="drReportBody"></tbody>
@@ -2626,7 +2626,7 @@ function downloadDailyReportExcel(){
   var aoa = [];
   aoa.push(['વાંકાનેર નગરપાલિકા - બેંક ખાતાવાર દૈનિક અહેવાલ (તારીખ: ' + DR_CURRENT_DATE + ')']);
   aoa.push([]);
-  aoa.push(['ખાતાની વિગત અને નંબર', 'શરૂઆતનું બેલેન્સ (₹)', 'જમા (₹)', 'ઉધાર (₹)', 'બંધ બેલેન્સ (₹)']);
+  aoa.push(['ખાતાની વિગત અને નંબર', 'શરૂઆતનું બેલેન્સ (₹)', 'જમા (₹)', 'ઉધાર (₹)', 'ક્લોસીંગ બેલેન્સ (₹)']);
 
   var totOpen=0, totCredit=0, totDebit=0, totClose=0;
   DR_CURRENT_ROWS.forEach(function(row){
