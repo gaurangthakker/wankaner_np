@@ -686,6 +686,53 @@
   }
   .ee-delete-btn:hover{background:#d9534f;color:#fff;}
 
+  /* Admin Activity Log */
+  .log-row{
+    padding:12px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  .log-row:last-child{border-bottom:none;}
+  .log-top{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .log-time{
+    font-family:var(--font-head);font-weight:600;font-size:12px;
+    color:var(--navy-800);
+    background:var(--cyan-100);
+    padding:3px 8px;border-radius:6px;
+    white-space:nowrap;
+  }
+  :root[data-theme="dark"] .log-time{color:var(--cyan-300);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .log-time{color:var(--cyan-300);}}
+  .log-badge{
+    font-size:10.5px;font-weight:600;
+    padding:3px 8px;border-radius:6px;
+    white-space:nowrap;
+    background:rgba(120,130,150,0.15);color:var(--text);
+  }
+  .log-badge.update{background:rgba(0,170,200,0.14);color:var(--navy-800);}
+  .log-badge.add{background:rgba(30,158,107,0.12);color:var(--good);}
+  .log-badge.edit{background:rgba(224,161,0,0.16);color:#a97800;}
+  .log-badge.delete{background:rgba(217,83,79,0.12);color:#d9534f;}
+  :root[data-theme="dark"] .log-badge.update{color:var(--cyan-300);}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .log-badge.update{color:var(--cyan-300);}}
+  .log-meta{
+    font-size:11px;
+    color:var(--text-soft);
+    margin-top:6px;
+    word-break:break-word;
+  }
+  .log-details{
+    margin-top:6px;
+    font-size:12.5px;
+    line-height:1.55;
+    word-break:break-word;
+  }
+  .log-details div{padding:1px 0;}
+
   /* Reports list rows */
   .rep-row{
     display:flex;
@@ -1143,6 +1190,10 @@
               <div class="ico">✎</div>
               <div class="t">Edit Entry / એન્ટ્રી બદલો</div>
             </div>
+            <div class="action-btn primary" onclick="showAdminSection('activityLog')">
+              <div class="ico">☰</div>
+              <div class="t">Activity Log / પ્રવૃત્તિ લોગ</div>
+            </div>
           </div>
         </div>
 
@@ -1185,6 +1236,17 @@
             </div>
             <button class="save-btn" onclick="submitAddAccount()">Add Account / ખાતું ઉમેરો</button>
           </div>
+        </div>
+
+        <div id="adminActivityLog" class="admin-sub" style="display:none;">
+          <div class="admin-panel-head">
+            <span>Activity Log / પ્રવૃત્તિ લોગ</span>
+            <button type="button" class="admin-back-btn" onclick="showAdminMenu()">← Back / પાછા</button>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+            <button type="button" class="admin-back-btn" onclick="loadAdminLog()">↻ Refresh / રિફ્રેશ</button>
+          </div>
+          <div id="adminLogList" class="register"></div>
         </div>
 
         <div id="adminEditEntry" class="admin-sub" style="display:none;">
@@ -1817,6 +1879,117 @@ function renderAccountSummary(){
 
 
 
+/* ---------- Admin Activity Log ----------
+   Every change made from the Admin Panel (and Edit / Delete Entry) is sent
+   to the backend with the user's public IP + device. The backend stamps the
+   time itself (server clock), so it cannot be changed from the phone. */
+var ADMIN_IP_CACHE = null;
+
+function getClientIp(){
+  if(ADMIN_IP_CACHE) return Promise.resolve(ADMIN_IP_CACHE);
+  var lookup = fetch('https://api.ipify.org?format=json')
+    .then(function(r){ return r.json(); })
+    .then(function(j){ return (j && j.ip) ? j.ip : 'Unknown'; });
+  var timeout = new Promise(function(resolve){ setTimeout(function(){ resolve('Unknown'); }, 4000); });
+  return Promise.race([lookup, timeout])
+    .catch(function(){ return 'Unknown'; })
+    .then(function(ip){ if(ip !== 'Unknown') ADMIN_IP_CACHE = ip; return ip; });
+}
+
+function getDeviceSummary(){
+  var ua = navigator.userAgent || '';
+  var os = /Android/i.test(ua) ? 'Android' :
+           /iPhone|iPad|iPod/i.test(ua) ? 'iOS' :
+           /Windows/i.test(ua) ? 'Windows' :
+           /Mac OS X/i.test(ua) ? 'Mac' :
+           /Linux/i.test(ua) ? 'Linux' : 'Unknown OS';
+  var br = /Edg\//.test(ua) ? 'Edge' :
+           /OPR\/|Opera/.test(ua) ? 'Opera' :
+           /SamsungBrowser/.test(ua) ? 'Samsung Browser' :
+           /Chrome\//.test(ua) ? 'Chrome' :
+           /Firefox\//.test(ua) ? 'Firefox' :
+           /Safari\//.test(ua) ? 'Safari' : 'Browser';
+  return os + ' / ' + br;
+}
+
+// Fire-and-forget: a logging failure must never block the real admin action.
+function logAdminAction(logAction, detailLines){
+  try{
+    getClientIp().then(function(ip){
+      return postToApi({
+        action: 'logAdmin',
+        logAction: logAction,
+        ip: ip,
+        device: getDeviceSummary(),
+        details: (detailLines || []).join('\n')
+      });
+    }).catch(function(){});
+  }catch(e){}
+}
+
+function logAccountLabel(accountKey){
+  var acc = ACCOUNTS.find(function(a){ return a.key === accountKey; });
+  if(!acc) return String(accountKey || '');
+  return acc.number ? (acc.name + ' — ' + acc.number) : acc.name;
+}
+
+function logRupee(n){ return '₹ ' + fmtAmt(n); }
+
+function logTypeLabel(t){
+  var u = String(t || '').toUpperCase();
+  return (u === 'CREDIT' || u === 'CR') ? 'Credit' : 'Debit';
+}
+
+var ADMIN_LOG_LABELS = {
+  ADMIN_OPEN:     { cls:'',       text:'Admin Login / એડમિન લોગિન' },
+  UPDATE_BALANCE: { cls:'update', text:'Update Balance / બેલેન્સ અપડેટ' },
+  ADD_ACCOUNT:    { cls:'add',    text:'Add Account / ખાતું ઉમેર્યું' },
+  EDIT_ENTRY:     { cls:'edit',   text:'Edit Entry / એન્ટ્રી બદલી' },
+  DELETE_ENTRY:   { cls:'delete', text:'Delete Entry / એન્ટ્રી કાઢી' }
+};
+
+function logEsc(t){
+  return String(t == null ? '' : t)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function loadAdminLog(){
+  var list = document.getElementById('adminLogList');
+  list.innerHTML = '<div class="placeholder-card">Loading... / લોડ થઈ રહ્યું છે...</div>';
+  getFromApi('getAdminLogs').then(function(res){
+    if(!res || res.error || !res.logs){
+      list.innerHTML = '<div class="placeholder-card">Activity log is not available yet. Please update the Google Apps Script. / એક્ટિવિટી લોગ હજુ ઉપલબ્ધ નથી. કૃપા કરીને Google Apps Script અપડેટ કરો.</div>';
+      return;
+    }
+    renderAdminLog(res.logs);
+  });
+}
+
+function renderAdminLog(logs){
+  var list = document.getElementById('adminLogList');
+  if(!logs.length){
+    list.innerHTML = '<div class="placeholder-card">No activity yet. / હજુ કોઈ પ્રવૃત્તિ નથી.</div>';
+    return;
+  }
+  var html = '';
+  logs.forEach(function(lg){
+    var meta = ADMIN_LOG_LABELS[lg.action] || { cls:'', text: lg.action };
+    var lines = String(lg.details || '').split('\n').filter(function(x){ return x !== ''; });
+    html += '<div class="log-row">' +
+      '<div class="log-top">' +
+        '<span class="log-time">' + logEsc(lg.time) + '</span>' +
+        '<span class="log-badge ' + meta.cls + '">' + logEsc(meta.text) + '</span>' +
+      '</div>' +
+      '<div class="log-meta">IP: <b>' + logEsc(lg.ip || 'Unknown') + '</b>' +
+        (lg.device ? ' &nbsp;|&nbsp; ' + logEsc(lg.device) : '') + '</div>' +
+      '<div class="log-details">' +
+        lines.map(function(l){ return '<div>' + logEsc(l) + '</div>'; }).join('') +
+      '</div>' +
+    '</div>';
+  });
+  list.innerHTML = html;
+}
+
 /* ---------- Admin password gate ---------- */
 var ADMIN_PASSWORD = '94976';
 var pendingPasswordCallback = null;
@@ -1825,6 +1998,7 @@ function requestAdminAccess(){
   pendingPasswordCallback = function(){
     showAdminMenu();
     showView('admin');
+    logAdminAction('ADMIN_OPEN', ['Admin Panel opened']);
   };
   openAdminPasswordModal();
 }
@@ -1884,6 +2058,7 @@ function showAdminMenu(){
   document.getElementById('adminUpdateBalance').style.display = 'none';
   document.getElementById('adminAddAccount').style.display = 'none';
   document.getElementById('adminEditEntry').style.display = 'none';
+  document.getElementById('adminActivityLog').style.display = 'none';
 }
 
 function showAdminSection(name){
@@ -1891,6 +2066,10 @@ function showAdminSection(name){
   document.getElementById('adminUpdateBalance').style.display = (name === 'updateBalance') ? '' : 'none';
   document.getElementById('adminAddAccount').style.display = (name === 'addAccount') ? '' : 'none';
   document.getElementById('adminEditEntry').style.display = (name === 'editEntry') ? '' : 'none';
+  document.getElementById('adminActivityLog').style.display = (name === 'activityLog') ? '' : 'none';
+  if(name === 'activityLog'){
+    loadAdminLog();
+  }
   if(name === 'updateBalance'){
     renderUpdateBalanceList();
     document.getElementById('ubDate').value = todayDDMMYYYY();
@@ -1969,8 +2148,15 @@ function submitUpdateBalance(){
 }
 
 function doSubmitUpdateBalance(date, updates){
+  // Capture the old balances BEFORE they are overwritten, for the activity log.
+  var logLines = ['Closing balance date: ' + date];
+  updates.forEach(function(u){
+    var acc = ACCOUNTS[u.idx];
+    logLines.push(logAccountLabel(acc.key) + ': ' + logRupee(acc.balance) + ' → ' + logRupee(u.amount));
+  });
   postToApi({ action: 'updateBalance', date: date, updates: updates }).then(function(res){
     if(res && res.success){
+      logAdminAction('UPDATE_BALANCE', logLines);
       updates.forEach(function(u){ ACCOUNTS[u.idx].balance = u.amount; });
       renderAccountSummary();
       showAdminMenu();
@@ -1991,6 +2177,11 @@ function submitAddAccount(){
 
   postToApi({ action: 'addAccount', name: name, number: number, balance: balance || 0 }).then(function(res){
     if(res && res.success){
+      logAdminAction('ADD_ACCOUNT', [
+        'Account: ' + name,
+        'Account number: ' + (number || '—'),
+        'Opening balance: ' + logRupee(balance || 0)
+      ]);
       document.getElementById('newAcctName').value = '';
       document.getElementById('newAcctNumber').value = '';
       document.getElementById('newAcctBalance').value = '';
@@ -2201,6 +2392,21 @@ function submitEditEntry(){
 
   var rowBeingEdited = EE_EDITING_ROW;
 
+  // Compare old vs new so the activity log shows exactly what changed.
+  var oldEntry = ALL_ENTRIES.find(function(en){ return en.row === rowBeingEdited; });
+  var logLines = [];
+  if(oldEntry){
+    logLines.push('Entry: ' + oldEntry.date + ' | ' + logAccountLabel(oldEntry.accountKey) + ' | ' + logRupee(oldEntry.amount));
+    if(oldEntry.date !== date) logLines.push('Date: ' + oldEntry.date + ' → ' + date);
+    if(logTypeLabel(oldEntry.type) !== logTypeLabel(type)) logLines.push('Type: ' + logTypeLabel(oldEntry.type) + ' → ' + logTypeLabel(type));
+    if(oldEntry.accountKey !== accountKey) logLines.push('Account: ' + logAccountLabel(oldEntry.accountKey) + ' → ' + logAccountLabel(accountKey));
+    if(Number(oldEntry.amount) !== Number(amount)) logLines.push('Amount: ' + logRupee(oldEntry.amount) + ' → ' + logRupee(amount));
+    if(String(oldEntry.particular || '') !== particular) logLines.push('Particular: ' + (oldEntry.particular || '—') + ' → ' + (particular || '—'));
+    if(logLines.length === 1) logLines.push('No field was changed');
+  } else {
+    logLines.push('Entry row: ' + rowBeingEdited);
+  }
+
   postToApi({
     action: 'updateEntry',
     row: rowBeingEdited,
@@ -2211,6 +2417,7 @@ function submitEditEntry(){
     particular: particular
   }).then(function(res){
     if(res && res.success){
+      logAdminAction('EDIT_ENTRY', logLines);
       closeEditEntryModal();
       showToast('Entry updated / એન્ટ્રી બદલાઈ');
       EE_CURRENT_DATE = date;
@@ -2244,6 +2451,13 @@ function confirmAndDeleteEntry(rowIndex){
     row: rowIndex
   }).then(function(res){
     if(res && res.success){
+      logAdminAction('DELETE_ENTRY', [
+        'Date: ' + entry.date,
+        'Account: ' + label,
+        'Type: ' + logTypeLabel(entry.type),
+        'Amount: ' + logRupee(entry.amount),
+        'Particular: ' + (entry.particular || '—')
+      ]);
       showToast('Entry deleted / એન્ટ્રી કાઢી નાખી');
       fetchAccountsAndBalances();
     } else {
