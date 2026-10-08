@@ -891,6 +891,90 @@
     font-weight:700;
     background:none;
   }
+  .dr-summary-box{
+    width:100mm;
+    max-width:100%;
+    margin:5mm auto 0;
+    border:1.5px solid #000;
+    border-radius:3mm;
+    overflow:hidden;
+    font-family:Arial, var(--font-body);
+    color:#000;
+  }
+  .dr-sum-title{
+    text-align:center;
+    font-size:11.5px;
+    font-weight:800;
+    letter-spacing:1.2px;
+    padding:3px 6px;
+    border-bottom:1.5px solid #000;
+  }
+  .dr-summary{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+    font-size:11px;
+    color:#000;
+  }
+  .dr-summary td{
+    border:none;
+    border-bottom:1px dotted #000;
+    padding:2.5px 6px;
+    vertical-align:middle;
+    line-height:1.2;
+  }
+  .dr-summary td.dr-sum-label{
+    width:66%;
+    text-align:left;
+    font-weight:700;
+    border-right:1px solid #000;
+  }
+  .dr-summary td.dr-sum-amt{
+    width:34%;
+    text-align:right;
+    font-weight:700;
+  }
+  .dr-summary tr.dr-sum-total td{
+    border-top:1.5px solid #000;
+  }
+  .dr-summary tr.dr-sum-closing td{
+    border-top:3px double #000;
+    border-bottom:none;
+    font-size:12px;
+  }
+  .dr-input{
+    width:100%;
+    border:none;
+    border-bottom:1px dashed #000;
+    background:#f2f2f2;
+    text-align:right;
+    font:inherit;
+    font-weight:700;
+    color:#000;
+    padding:2px 0;
+    outline:none;
+    -webkit-appearance:none;
+    appearance:none;
+    border-radius:0;
+  }
+  .dr-input:focus{background:#e6e6e6;}
+  /* While the PDF screenshot is taken, the inputs look like plain text. */
+  .dr-capturing .dr-input{
+    border-bottom-color:transparent;
+    background:none;
+  }
+  .dr-tally-note{
+    max-width:215.9mm;
+    margin:10px auto 0;
+    padding:0 4px;
+    font-family:Arial, var(--font-body);
+    font-size:12px;
+    font-weight:700;
+  }
+  .dr-tally-note.ok{color:#1e7145;}
+  .dr-tally-note.bad{color:#c0392b;}
+  .dr-tally-note.hint{color:#666;font-weight:400;}
+
   .dr-stamps{
     margin-top:auto;
     padding-top:30mm;
@@ -942,6 +1026,8 @@
       min-height:355.6mm;
     }
     .dr-toolbar{display:none;}
+    .dr-tally-note{display:none !important;}
+    .dr-input{border:none;background:none;}
     @page{size:legal portrait;margin:0;}
   }
 
@@ -1548,11 +1634,40 @@
       <tbody id="drReportBody"></tbody>
       <tfoot id="drReportFoot"></tfoot>
     </table>
+
+    <div class="dr-summary-box">
+      <div class="dr-sum-title">SUMMARY / સારાંશ</div>
+    <table class="dr-summary" id="drSummary">
+      <tr>
+        <td class="dr-sum-label">OPENING BALANCE / શરૂઆતનું બેલેન્સ</td>
+        <td class="dr-sum-amt" id="drSumOpening">0.00</td>
+      </tr>
+      <tr>
+        <td class="dr-sum-label">INCOME / આવક</td>
+        <td class="dr-sum-amt"><input type="text" id="drIncome" class="dr-input" inputmode="decimal" autocomplete="off" oninput="drInputSanitize(this)" onfocus="drInputFocus(this)" onblur="drInputBlur(this)"></td>
+      </tr>
+      <tr class="dr-sum-total">
+        <td class="dr-sum-label">TOTAL / કુલ</td>
+        <td class="dr-sum-amt" id="drSumTotal">0.00</td>
+      </tr>
+      <tr>
+        <td class="dr-sum-label">PAYMENT / ચુકવણી</td>
+        <td class="dr-sum-amt"><input type="text" id="drPayment" class="dr-input" inputmode="decimal" autocomplete="off" oninput="drInputSanitize(this)" onfocus="drInputFocus(this)" onblur="drInputBlur(this)"></td>
+      </tr>
+      <tr class="dr-sum-closing">
+        <td class="dr-sum-label">CLOSING BALANCE / ક્લોસીંગ બેલેન્સ</td>
+        <td class="dr-sum-amt" id="drSumClosing">0.00</td>
+      </tr>
+    </table>
+    </div>
+
     <div class="dr-stamps">
       <div class="dr-stamp"><div class="st-role">ACCOUNTANT</div><div class="st-org">WANKANER NAGARPALIKA</div><div class="st-org-gu">વાંકાનેર નગરપાલિકા</div></div>
       <div class="dr-stamp"><div class="st-role">CHIEF OFFICER</div><div class="st-org">WANKANER NAGARPALIKA</div><div class="st-org-gu">વાંકાનેર નગરપાલિકા</div></div>
     </div>
   </div>
+  <!-- Screen-only tally check: kept outside the report page so it can never be printed or saved in the PDF -->
+  <div class="dr-tally-note hint" id="drTallyNote"></div>
 </div>
 
 <div id="toast" class="toast">Entry saved / એન્ટ્રી સેવ થઈ</div>
@@ -2875,6 +2990,76 @@ function renderDailyReportTable(){
       '<td>' + fmtAmt(totDebit) + '</td>' +
       '<td>' + fmtAmt(totClose) + '</td>' +
     '</tr>';
+
+  // Summary block below the table: opening total comes from the table,
+  // Income and Payment are typed by the user (cleared for every new report).
+  DR_TOT.open = totOpen;
+  DR_TOT.close = totClose;
+  document.getElementById('drIncome').value = '';
+  document.getElementById('drPayment').value = '';
+  drSummaryRecalc();
+}
+
+/* ---------- Summary block (Opening / Income / Total / Payment / Closing) ---------- */
+var DR_TOT = { open: 0, close: 0 };
+
+function drParseNum(v){
+  var n = parseFloat(String(v == null ? '' : v).replace(/,/g, '').trim());
+  return isNaN(n) ? 0 : n;
+}
+
+function drSummaryValues(){
+  var opening = DR_TOT.open;
+  var income = drParseNum(document.getElementById('drIncome').value);
+  var payment = drParseNum(document.getElementById('drPayment').value);
+  var total = opening + income;
+  var closing = total - payment;
+  return { opening: opening, income: income, total: total, payment: payment, closing: closing, tableClosing: DR_TOT.close };
+}
+
+function drSummaryRecalc(){
+  var v = drSummaryValues();
+  document.getElementById('drSumOpening').textContent = fmtAmt(v.opening);
+  document.getElementById('drSumTotal').textContent = fmtAmt(v.total);
+  document.getElementById('drSumClosing').textContent = fmtAmt(v.closing);
+
+  // Screen-only tally check against the table's Closing Balance total
+  // (hidden in print and left out of the PDF).
+  var note = document.getElementById('drTallyNote');
+  var incomeEmpty = document.getElementById('drIncome').value.trim() === '';
+  var paymentEmpty = document.getElementById('drPayment').value.trim() === '';
+  if(incomeEmpty && paymentEmpty){
+    note.className = 'dr-tally-note hint';
+    note.textContent = 'Enter Income and Payment to check tally with Closing Balance. / ક્લોસીંગ બેલેન્સ સાથે મેળ ચકાસવા આવક અને ચુકવણી લખો.';
+  } else if(Math.abs(drR2(v.closing - v.tableClosing)) < 0.005){
+    note.className = 'dr-tally-note ok';
+    note.textContent = '✓ Tally matches the Closing Balance total. / ક્લોસીંગ બેલેન્સ સાથે મેળ ખાય છે.';
+  } else {
+    note.className = 'dr-tally-note bad';
+    note.textContent = '✗ Does not tally. Difference: ₹ ' + fmtAmt(v.closing - v.tableClosing) + ' / મેળ ખાતો નથી.';
+  }
+}
+
+// Only digits and one decimal point while typing.
+function drInputSanitize(el){
+  var t = el.value.replace(/[^0-9.]/g, '');
+  var firstDot = t.indexOf('.');
+  if(firstDot !== -1){
+    t = t.slice(0, firstDot + 1) + t.slice(firstDot + 1).replace(/\./g, '');
+  }
+  if(el.value !== t) el.value = t;
+  drSummaryRecalc();
+}
+
+function drInputFocus(el){
+  el.value = el.value.replace(/,/g, '');
+}
+
+function drInputBlur(el){
+  if(el.value.trim() !== ''){
+    el.value = fmtAmt(drParseNum(el.value));
+  }
+  drSummaryRecalc();
 }
 
 function closeDailyReportOverlay(){
@@ -2910,10 +3095,12 @@ function downloadDailyReportPDF(){
   var pageEl = document.getElementById('dailyReportPage');
   var prevShadow = pageEl.style.boxShadow;
   pageEl.style.boxShadow = 'none';
+  pageEl.classList.add('dr-capturing');
   showToast('Generating PDF… / PDF બની રહ્યું છે…');
 
   html2canvas(pageEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(function(canvas){
     pageEl.style.boxShadow = prevShadow;
+    pageEl.classList.remove('dr-capturing');
 
     var jsPDFCtor = window.jspdf.jsPDF;
     // Legal = 8.5 x 14 in = 215.9 x 355.6 mm
@@ -2934,6 +3121,7 @@ function downloadDailyReportPDF(){
     doc.save(drFileNameBase() + '.pdf');
   }).catch(function(){
     pageEl.style.boxShadow = prevShadow;
+    pageEl.classList.remove('dr-capturing');
     alert('Could not generate PDF. Please try again. / PDF બનાવી શકાયું નથી.');
   });
 }
@@ -2967,6 +3155,13 @@ function downloadDailyReportExcel(){
     drR2(totDebit),
     drR2(totClose)
   ]);
+  var sv = drSummaryValues();
+  aoa.push([]);
+  aoa.push(['OPENING BALANCE / શરૂઆતનું બેલેન્સ', drR2(sv.opening)]);
+  aoa.push(['INCOME / આવક', drR2(sv.income)]);
+  aoa.push(['TOTAL / કુલ', drR2(sv.total)]);
+  aoa.push(['PAYMENT / ચુકવણી', drR2(sv.payment)]);
+  aoa.push(['CLOSING BALANCE / ક્લોસીંગ બેલેન્સ', drR2(sv.closing)]);
   aoa.push([]);
   aoa.push([]);
   aoa.push([]);
