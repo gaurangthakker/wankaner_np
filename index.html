@@ -891,6 +891,94 @@
     font-weight:700;
     background:none;
   }
+  .pick-wrap{position:relative;}
+  .pick-list{
+    position:absolute;left:0;right:0;top:100%;
+    margin-top:2px;
+    z-index:80;
+    max-height:230px;
+    overflow-y:auto;
+    background:#fff;
+    border:1px solid #c9d1dc;
+    border-radius:8px;
+    box-shadow:0 6px 18px rgba(0,0,0,.18);
+  }
+  .pick-item{
+    padding:10px 12px;
+    font-size:13px;
+    color:#111;
+    border-bottom:1px solid #eef1f5;
+    cursor:pointer;
+  }
+  .pick-item:last-child{border-bottom:none;}
+  .pick-item:hover,.pick-item:active{background:#eef3fb;}
+  .pick-head{
+    padding:6px 12px;
+    font-size:11px;
+    font-weight:700;
+    color:#5b6b80;
+    background:#f5f7fa;
+    position:sticky;top:0;
+  }
+  /* Hover popup: that day's entries for one bank account (screen only) */
+  .dr-acct-cell{cursor:pointer;}
+  .dr-acct-cell:hover{background:#fff6e0;}
+  #drEntryPopup{
+    display:none;
+    position:fixed;
+    z-index:100000;
+    min-width:240px;
+    max-width:340px;
+    max-height:260px;
+    overflow-y:auto;
+    background:#fff;
+    color:#111;
+    border:1px solid #b9c3d0;
+    border-radius:8px;
+    box-shadow:0 8px 22px rgba(0,0,0,.28);
+    font-size:11.5px;
+    line-height:1.35;
+    padding:0;
+  }
+  #drEntryPopup .dp-head{
+    position:sticky;top:0;
+    padding:6px 9px;
+    background:#1f3a5f;
+    color:#fff;
+    font-weight:700;
+    font-size:11.5px;
+  }
+  #drEntryPopup .dp-row{
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+    padding:5px 9px;
+    border-bottom:1px solid #eef1f5;
+  }
+  #drEntryPopup .dp-part{flex:1;word-break:break-word;}
+  #drEntryPopup .dp-amt{white-space:nowrap;font-weight:700;}
+  #drEntryPopup .dp-cr{color:#157347;}
+  #drEntryPopup .dp-dr{color:#c0392b;}
+  #drEntryPopup .dp-tot{
+    position:sticky;bottom:0;
+    background:#f5f7fa;
+    border-top:2px solid #b9c3d0;
+    padding:4px 9px 5px;
+  }
+  #drEntryPopup .dp-trow{
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+    padding:1px 0;
+    font-weight:700;
+  }
+  #drEntryPopup .dp-diff{
+    margin-top:2px;
+    padding-top:3px;
+    border-top:1px dashed #b9c3d0;
+  }
+  #drEntryPopup .dp-none{padding:8px 9px;color:#667;}
+  @media print{ #drEntryPopup{display:none !important;} }
   .dr-summary-box{
     width:100mm;
     max-width:100%;
@@ -1309,7 +1397,7 @@
 
           <div class="form-group">
             <label>Account / ખાતું</label>
-            <select id="entryAccount" class="form-input" onchange="particularChanged('entry')">
+            <select id="entryAccount" class="form-input">
               <option value="">Select Account / ખાતું પસંદ કરો</option>
             </select>
           </div>
@@ -1321,10 +1409,10 @@
 
           <div class="form-group">
             <label>Particular / વિગત</label>
-            <select id="entryParticularSel" class="form-input" onchange="particularChanged('entry')"></select>
-            <select id="entryBankSel" class="form-input" style="display:none;margin-top:8px;" onchange="particularChanged('entry')"></select>
-            <input type="text" id="entryOtherTxt" class="form-input" style="display:none;margin-top:8px;" placeholder="Type particular manually / જાતે વિગત લખો" autocomplete="off" oninput="particularChanged('entry')">
-            <input type="hidden" id="entryParticular">
+            <div class="pick-wrap">
+  <input type="text" id="entryParticular" class="form-input" placeholder="Type or select particular / વિગત લખો કે પસંદ કરો" autocomplete="off" onfocus="pickOpen('entry')" oninput="pickOpen('entry')" onblur="pickCloseSoon('entry')">
+  <div id="entryPickList" class="pick-list" style="display:none;"></div>
+</div>
           </div>
 
           <button class="save-btn" onclick="openConfirm()">Save Entry / એન્ટ્રી સેવ કરો</button>
@@ -1583,7 +1671,7 @@
       </div>
       <div class="form-group">
         <label>Account / ખાતું</label>
-        <select id="eeEditAccount" class="form-input" onchange="particularChanged('ee')"></select>
+        <select id="eeEditAccount" class="form-input"></select>
       </div>
       <div class="form-group">
         <label>Amount (₹) / રકમ (₹)</label>
@@ -1591,10 +1679,10 @@
       </div>
       <div class="form-group">
         <label>Particular / વિગત</label>
-        <select id="eeEditParticularSel" class="form-input" onchange="particularChanged('ee')"></select>
-        <select id="eeEditBankSel" class="form-input" style="display:none;margin-top:8px;" onchange="particularChanged('ee')"></select>
-        <input type="text" id="eeEditOtherTxt" class="form-input" style="display:none;margin-top:8px;" placeholder="Type particular manually / જાતે વિગત લખો" autocomplete="off" oninput="particularChanged('ee')">
-        <input type="hidden" id="eeEditParticular">
+        <div class="pick-wrap">
+  <input type="text" id="eeEditParticular" class="form-input" placeholder="Type or select particular / વિગત લખો કે પસંદ કરો" autocomplete="off" onfocus="pickOpen('ee')" oninput="pickOpen('ee')" onblur="pickCloseSoon('ee')">
+  <div id="eeEditPickList" class="pick-list" style="display:none;"></div>
+</div>
       </div>
     </div>
     <div class="modal-actions">
@@ -1820,7 +1908,7 @@ refreshTodayDisplays();
 document.getElementById('entryDate').value = todayDDMMYYYY();
 document.getElementById('entryDatePicker').max = todayYYYYMMDD();
 
-/* ---------- Particular picker (dropdown + Bank Transfer account list) ---------- */
+/* ---------- Particular: type directly OR pick from suggestions ---------- */
 var PARTICULAR_OPTIONS = [
   'CHEQUE DEBIT (ચેક ઉધાર)',
   'CHEQUE CREDIT (ચેક જમા)',
@@ -1830,126 +1918,103 @@ var PARTICULAR_OPTIONS = [
   'ONLINE INCOME CREDIT (ઓનલાઇન આવક જમા)',
   'INCOME (આવક)',
   'PAYMENT (ચુકવણી)',
-  'HAVALO (હવાલો)'
+  'HAVALO (હવાલો)',
+  'BANK TRANSFER (બેંક ટ્રાન્સફર)'
 ];
 var PARTICULAR_BANK = 'BANK TRANSFER (બેંક ટ્રાન્સફર)';
-var PARTICULAR_OTHER = '__OTHER__';
 var PARTICULAR_CFG = {
-  entry: { sel:'entryParticularSel', bank:'entryBankSel', other:'entryOtherTxt', hid:'entryParticular', acc:'entryAccount' },
-  ee:    { sel:'eeEditParticularSel', bank:'eeEditBankSel', other:'eeEditOtherTxt', hid:'eeEditParticular', acc:'eeEditAccount' }
+  entry: { input:'entryParticular', list:'entryPickList', acc:'entryAccount' },
+  ee:    { input:'eeEditParticular', list:'eeEditPickList', acc:'eeEditAccount' }
 };
+var PICK_TIMER = {};
 
-function particularAddOption(select, value, text, custom){
-  var o = document.createElement('option');
-  o.value = value; o.textContent = text;
-  if(custom) o.setAttribute('data-custom', '1');
-  select.appendChild(o);
-  return o;
+function pickHide(p){
+  var l = document.getElementById(PARTICULAR_CFG[p].list);
+  if(l) l.style.display = 'none';
 }
 
-function particularInit(){
-  Object.keys(PARTICULAR_CFG).forEach(function(k){
-    var sel = document.getElementById(PARTICULAR_CFG[k].sel);
-    if(!sel) return;
-    sel.innerHTML = '';
-    particularAddOption(sel, '', 'Select Particular / વિગત પસંદ કરો');
-    PARTICULAR_OPTIONS.forEach(function(t){ particularAddOption(sel, t, t); });
-    particularAddOption(sel, PARTICULAR_BANK, PARTICULAR_BANK);
-    particularAddOption(sel, PARTICULAR_OTHER, 'OTHER / અન્ય (type manually / જાતે લખો)');
-  });
+function pickCloseSoon(p){
+  // small delay so a tap on a suggestion is registered before the list hides
+  clearTimeout(PICK_TIMER[p]);
+  PICK_TIMER[p] = setTimeout(function(){ pickHide(p); }, 200);
 }
 
-// Rebuild the bank-account list (all accounts except the one chosen above).
-function particularFillBanks(c, keepValue){
-  var bank = document.getElementById(c.bank);
-  var accKey = document.getElementById(c.acc).value;
-  var prev = keepValue != null ? keepValue : bank.value;
-  bank.innerHTML = '';
-  particularAddOption(bank, '', 'Select Bank Account / બેંક ખાતું પસંદ કરો');
-  ACCOUNTS.forEach(function(acc){
-    if(acc.key === accKey) return;
-    var label = acc.number ? (acc.name + ' — ' + acc.number) : acc.name;
-    particularAddOption(bank, label, label);
-  });
-  if(prev){
-    var found = false;
-    for(var i = 0; i < bank.options.length; i++){ if(bank.options[i].value === prev){ found = true; break; } }
-    if(!found) particularAddOption(bank, prev, prev, true);
-    bank.value = prev;
-  }
-}
-
-function particularChanged(p){
+function pickOpen(p){
+  clearTimeout(PICK_TIMER[p]);
   var c = PARTICULAR_CFG[p];
-  var sel = document.getElementById(c.sel);
-  var bank = document.getElementById(c.bank);
-  var other = document.getElementById(c.other);
-  var hid = document.getElementById(c.hid);
-  if(sel.value === PARTICULAR_BANK){
-    bank.style.display = '';
-    other.style.display = 'none';
-    particularFillBanks(c);
-    hid.value = bank.value ? (PARTICULAR_BANK + ' — ' + bank.value) : '';
-  } else if(sel.value === PARTICULAR_OTHER){
-    bank.style.display = 'none';
-    other.style.display = '';
-    hid.value = other.value.trim();
+  var input = document.getElementById(c.input);
+  var list = document.getElementById(c.list);
+  var val = input.value;
+  var up = val.toUpperCase();
+  var items = [];   // {text, action}
+  var head = '';
+
+  if(up.indexOf('BANK TRANSFER') !== -1 && up.indexOf('BANK TRANSFER') === up.search(/\S/)){
+    // Bank-transfer mode: list the bank accounts
+    head = 'Select Bank Account / બેંક ખાતું પસંદ કરો';
+    var q = '';
+    var di = val.indexOf(' — ');
+    if(di !== -1) q = val.slice(di + 3).trim().toLowerCase();
+    var accKey = document.getElementById(c.acc) ? document.getElementById(c.acc).value : '';
+    ACCOUNTS.forEach(function(acc){
+      if(acc.key === accKey) return;
+      var label = acc.number ? (acc.name + ' — ' + acc.number) : acc.name;
+      if(q && label.toLowerCase().indexOf(q) === -1) return;
+      items.push({ text: label, value: PARTICULAR_BANK + ' — ' + label, done: true });
+    });
+    if(!items.length && !ACCOUNTS.length){
+      items.push({ text: 'Accounts not loaded yet / ખાતાં લોડ થયાં નથી', value: null });
+    }
   } else {
-    bank.style.display = 'none';
-    other.style.display = 'none';
-    hid.value = sel.value;
+    var q2 = val.trim().toLowerCase();
+    PARTICULAR_OPTIONS.forEach(function(t){
+      if(q2 && t.toLowerCase().indexOf(q2) === -1) return;
+      if(t === PARTICULAR_BANK) items.push({ text: t, value: PARTICULAR_BANK + ' — ', done: false });
+      else items.push({ text: t, value: t, done: true });
+    });
   }
+
+  list.innerHTML = '';
+  if(!items.length){ list.style.display = 'none'; return; }
+  if(head){
+    var h = document.createElement('div');
+    h.className = 'pick-head';
+    h.textContent = head;
+    list.appendChild(h);
+  }
+  items.forEach(function(it){
+    var d = document.createElement('div');
+    d.className = 'pick-item';
+    d.textContent = it.text;
+    d.addEventListener('click', function(){
+      if(it.value == null) return;
+      input.value = it.value;
+      if(it.done){
+        pickHide(p);
+      } else {
+        // "BANK TRANSFER" picked: show the account list next
+        input.focus();
+        pickOpen(p);
+      }
+    });
+    list.appendChild(d);
+  });
+  list.style.display = 'block';
 }
 
 function particularSet(p, value){
-  var c = PARTICULAR_CFG[p];
-  var sel = document.getElementById(c.sel);
-  var bank = document.getElementById(c.bank);
-  value = (value || '').trim();
-  // drop any earlier "custom" option
-  Array.prototype.slice.call(sel.querySelectorAll('option[data-custom]')).forEach(function(o){ sel.removeChild(o); });
-  var other = document.getElementById(c.other);
-  bank.style.display = 'none';
-  bank.innerHTML = '';
-  other.style.display = 'none';
-  other.value = '';
-  if(!value){ sel.value = ''; particularChanged(p); return; }
-  var prefix = PARTICULAR_BANK + ' — ';
-  if(value.indexOf(prefix) === 0){
-    sel.value = PARTICULAR_BANK;
-    bank.style.display = '';
-    particularFillBanks(c, value.slice(prefix.length));
-    document.getElementById(c.hid).value = value;
-    return;
-  }
-  var found = false;
-  for(var i = 0; i < sel.options.length; i++){ if(sel.options[i].value === value){ found = true; break; } }
-  if(!found){
-    // free text (typed manually / older entries) opens in the manual box
-    sel.value = PARTICULAR_OTHER;
-    other.style.display = '';
-    other.value = value;
-    document.getElementById(c.hid).value = value;
-    return;
-  }
-  sel.value = value;
-  document.getElementById(c.hid).value = value;
+  document.getElementById(PARTICULAR_CFG[p].input).value = value || '';
+  pickHide(p);
 }
 
 function particularValid(p){
-  var c = PARTICULAR_CFG[p];
-  if(document.getElementById(c.sel).value === PARTICULAR_BANK && !document.getElementById(c.bank).value){
+  var v = document.getElementById(PARTICULAR_CFG[p].input).value.trim().replace(/\s*—\s*$/, '').trim();
+  if(v.toUpperCase() === PARTICULAR_BANK.toUpperCase()){
     alert('Please select the bank account for Bank Transfer. / કૃપા કરીને બેંક ટ્રાન્સફર માટે ખાતું પસંદ કરો.');
-    return false;
-  }
-  if(document.getElementById(c.sel).value === PARTICULAR_OTHER && !document.getElementById(c.other).value.trim()){
-    alert('Please type the particular. / કૃપા કરીને વિગત લખો.');
     return false;
   }
   return true;
 }
-
-particularInit();
 
 function openConfirm(){
   var date = normalizeDate(document.getElementById('entryDate').value);
@@ -3053,8 +3118,12 @@ function buildDailyReportRows(reportDate){
   return ACCOUNTS.map(function(acc){
     var opening = drBalanceAsOf(acc.key, prevDate);
     var totals = drDayTotals(acc.key, reportDate);
-    var closing = opening + totals.credit - totals.debit;
+    // Closing = balance replayed through the END of the report date, so an
+    // Admin > Update Balance "Closing Balance" entry dated that day (which
+    // overrides the balance) is honoured — same rule used for the Opening.
+    var closing = drBalanceAsOf(acc.key, reportDate);
     return {
+      key: acc.key,
       label: acc.number ? (acc.name + ' — ' + acc.number) : acc.name,
       opening: opening,
       credit: totals.credit,
@@ -3099,6 +3168,99 @@ function fmtAmt(n){
   return r.toLocaleString('en-IN', { minimumFractionDigits:2, maximumFractionDigits:2 });
 }
 
+/* ---------- Hover popup: that day's entries of a bank account ---------- */
+function drEsc(t){
+  return String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function drShowEntryPopup(accKey, ev){
+  var pop = document.getElementById('drEntryPopup');
+  var acc = ACCOUNTS.find(function(a){ return a.key === accKey; });
+  var label = acc ? (acc.number ? (acc.name + ' — ' + acc.number) : acc.name) : accKey;
+  var entries = ALL_ENTRIES.filter(function(en){
+    return en.accountKey === accKey && en.date === DR_CURRENT_DATE && !isBalanceMarkerParticular(en.particular);
+  }).sort(function(a, b){ return a.row - b.row; });
+
+  var html = '<div class="dp-head">' + drEsc(label) + ' · ' + drEsc(DR_CURRENT_DATE) + '</div>';
+  if(!entries.length){
+    html += '<div class="dp-none">No entries / કોઈ એન્ટ્રી નથી</div>';
+  } else {
+    var totCr = 0, totDr = 0;
+    entries.forEach(function(en){
+      var cr = isCreditType(en.type);
+      var a = Number(en.amount) || 0;
+      if(cr) totCr += a; else totDr += a;
+      html += '<div class="dp-row">' +
+        '<div class="dp-part">' + drEsc(en.particular || '—') + '</div>' +
+        '<div class="dp-amt ' + (cr ? 'dp-cr' : 'dp-dr') + '">' + (cr ? 'Cr ' : 'Dr ') + fmtAmt(en.amount) + '</div>' +
+      '</div>';
+    });
+    // Totals + difference (Credit - Debit): plus when Credit is more, minus when Debit is more
+    var diff = drR2(totCr - totDr);
+    var diffTxt = (diff > 0 ? '+' : (diff < 0 ? '−' : '')) + fmtAmt(Math.abs(diff));
+    var diffCls = diff > 0 ? 'dp-cr' : (diff < 0 ? 'dp-dr' : '');
+    html += '<div class="dp-tot">' +
+      '<div class="dp-trow"><span>Total Credit / કુલ જમા</span><span class="dp-cr">' + fmtAmt(totCr) + '</span></div>' +
+      '<div class="dp-trow"><span>Total Debit / કુલ ઉધાર</span><span class="dp-dr">' + fmtAmt(totDr) + '</span></div>' +
+      '<div class="dp-trow dp-diff"><span>Difference / તફાવત</span><span class="' + diffCls + '">' + diffTxt + '</span></div>' +
+    '</div>';
+  }
+  pop.innerHTML = html;
+  pop.style.display = 'block';
+  drMoveEntryPopup(ev);
+}
+
+function drMoveEntryPopup(ev){
+  var pop = document.getElementById('drEntryPopup');
+  if(pop.style.display !== 'block') return;
+  var pad = 12;
+  var x = ev.clientX + pad, y = ev.clientY + pad;
+  var w = pop.offsetWidth, h = pop.offsetHeight;
+  if(x + w > window.innerWidth - 6) x = Math.max(6, ev.clientX - w - pad);
+  if(y + h > window.innerHeight - 6) y = Math.max(6, ev.clientY - h - pad);
+  pop.style.left = x + 'px';
+  pop.style.top = y + 'px';
+}
+
+function drHideEntryPopup(){
+  document.getElementById('drEntryPopup').style.display = 'none';
+}
+
+(function(){
+  var body = document.getElementById('drReportBody');
+  if(!body) return;
+  function cellOf(ev){
+    var t = ev.target;
+    while(t && t !== body){
+      if(t.classList && t.classList.contains('dr-acct-cell')) return t;
+      t = t.parentNode;
+    }
+    return null;
+  }
+  body.addEventListener('mouseover', function(ev){
+    var c = cellOf(ev);
+    if(c) drShowEntryPopup(c.getAttribute('data-acc'), ev);
+  });
+  body.addEventListener('mousemove', function(ev){
+    if(cellOf(ev)) drMoveEntryPopup(ev);
+  });
+  body.addEventListener('mouseout', function(ev){
+    var c = cellOf(ev);
+    if(c && !c.contains(ev.relatedTarget)) drHideEntryPopup();
+  });
+  // Touch screens have no hover: tap a name to open, tap anywhere else to close
+  body.addEventListener('click', function(ev){
+    var c = cellOf(ev);
+    if(c && window.matchMedia && window.matchMedia('(hover: none)').matches){
+      drShowEntryPopup(c.getAttribute('data-acc'), ev);
+      ev.stopPropagation();
+    }
+  });
+  document.addEventListener('click', function(){
+    if(window.matchMedia && window.matchMedia('(hover: none)').matches) drHideEntryPopup();
+  });
+})();
+
 function generateDailyReport(){
   var date = normalizeDate(document.getElementById('drDate').value);
   if(!isValidDDMMYYYY(date)){
@@ -3132,7 +3294,7 @@ function renderDailyReportTable(){
   DR_CURRENT_ROWS.forEach(function(row){
     totOpen += row.opening; totCredit += row.credit; totDebit += row.debit; totClose += row.closing;
     html += '<tr>' +
-      '<td>' + row.label + '</td>' +
+      '<td class="dr-acct-cell" data-acc="' + String(row.key).replace(/"/g, '&quot;') + '">' + row.label + '</td>' +
       '<td>' + fmtAmt(row.opening) + '</td>' +
       '<td>' + fmtAmt(row.credit) + '</td>' +
       '<td>' + fmtAmt(row.debit) + '</td>' +
@@ -3362,5 +3524,6 @@ function downloadDailyReportExcel(){
 
 fetchAccountsAndBalances();
 </script>
+<div id="drEntryPopup"></div>
 </body>
 </html>
