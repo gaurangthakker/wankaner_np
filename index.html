@@ -2499,8 +2499,10 @@ function onDrDatePicked(){
   document.getElementById('drDate').value = yyyymmddToDDMMYYYY(picker.value);
 }
 
+function drR2(n){ return Math.round((Number(n || 0) + Number.EPSILON) * 100) / 100; }
+
 function fmtAmt(n){
-  return Math.round(Number(n || 0)).toLocaleString('en-IN', { minimumFractionDigits:0, maximumFractionDigits:0 });
+  return (Math.round((Number(n || 0) + Number.EPSILON) * 100) / 100).toLocaleString('en-IN', { minimumFractionDigits:2, maximumFractionDigits:2 });
 }
 
 function generateDailyReport(){
@@ -2631,21 +2633,24 @@ function downloadDailyReportExcel(){
     totOpen += row.opening; totCredit += row.credit; totDebit += row.debit; totClose += row.closing;
     aoa.push([
       row.label,
-      Math.round(row.opening),
-      Math.round(row.credit),
-      Math.round(row.debit),
-      Math.round(row.closing)
+      drR2(row.opening),
+      drR2(row.credit),
+      drR2(row.debit),
+      drR2(row.closing)
     ]);
   });
   aoa.push([
     'કુલ',
-    Math.round(totOpen),
-    Math.round(totCredit),
-    Math.round(totDebit),
-    Math.round(totClose)
+    drR2(totOpen),
+    drR2(totCredit),
+    drR2(totDebit),
+    drR2(totClose)
   ]);
 
   var ws = XLSX.utils.aoa_to_sheet(aoa);
+  Object.keys(ws).forEach(function(addr){
+    if(addr.charAt(0) !== '!' && ws[addr].t === 'n') ws[addr].z = '#,##0.00';
+  });
   ws['!cols'] = [{ wch:34 }, { wch:18 }, { wch:14 }, { wch:14 }, { wch:18 }];
   ws['!merges'] = [
     { s:{ r:0, c:0 }, e:{ r:0, c:4 } }
